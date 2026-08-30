@@ -9,7 +9,7 @@ Being built in three passes:
 | Pass | Scope | State |
 | --- | --- | --- |
 | 1 | Foundation — tokens, type, primitives, and all 12 onboarding screens | **done** |
-| 2 | The mechanic — shield, reflection, session, post-close capture, milestone, insights | not started |
+| 2 | The mechanic — shield, reflection, session, post-close capture, milestone, insights | **done** |
 | 3 | Return screens (home, settings) + real Screen Time wiring | not started |
 
 ## Running it
@@ -116,6 +116,12 @@ neither of which can present FamilyControls UI. No screen knows the difference.
 - **Category tiles show mono codes, not brand logos.** Not a shortcut — real app
   names and icons exist only inside Apple's picker, and the tokens it returns
   are opaque. The design already worked this way.
+- **The insights bar chart puts its day labels below the plot, not inside it.**
+  The prototype nests each label inside the 74px bar box, so the peak bar plus
+  its label overflow the box and the Sunday bar clips against the top of the
+  card. Reproducing that faithfully would have shipped the bug.
+- **The countdown ring is a stroked SVG arc, not a conic gradient.** Same
+  geometry, and it can animate without re-rasterising a gradient each frame.
 
 ## Open questions for design
 

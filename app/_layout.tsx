@@ -5,6 +5,8 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { ShieldStoreProvider } from '../src/shield/store';
+
 import { color } from '../src/theme/colors';
 import {
   Geist_300Light,
@@ -42,18 +44,20 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      {/* The app is dark end to end, so the status bar is light everywhere
-          except the milestone screen, which flips it in place. */}
-      <StatusBar style="light" />
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: color.ground },
-          // Screens carry their own entrance animation, matching the prototype.
-          animation: 'none',
-          gestureEnabled: true,
-        }}
-      />
+      <ShieldStoreProvider>
+        {/* The app is dark end to end, so the status bar is light everywhere
+            except the milestone screen, which flips it in place. */}
+        <StatusBar style="light" />
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: color.ground },
+            // Screens carry their own entrance animation, matching the prototype.
+            animation: 'none',
+            gestureEnabled: true,
+          }}
+        />
+      </ShieldStoreProvider>
     </SafeAreaProvider>
   );
 }

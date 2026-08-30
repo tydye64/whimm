@@ -33,6 +33,13 @@ type Props = {
    * beside system UI rather than anchoring the screen.
    */
   size?: 'default' | 'compact';
+  /**
+   * Fill and border overrides. Only the milestone screen needs these — it
+   * inverts the palette, so its buttons are teal-on-ochre rather than the
+   * ochre-on-teal every other screen uses.
+   */
+  fill?: string;
+  borderColor?: string;
   style?: StyleProp<ViewStyle>;
   labelStyle?: StyleProp<TextStyle>;
   children?: ReactNode;
@@ -64,6 +71,8 @@ export function Button({
   ready = true,
   disabled = false,
   size = 'default',
+  fill,
+  borderColor,
   style,
   labelStyle,
 }: Props) {
@@ -79,6 +88,8 @@ export function Button({
           styles.base,
           FILL[variant],
           compact && styles.compact,
+          fill !== undefined && { backgroundColor: fill },
+          borderColor !== undefined && { borderColor },
           // hover lifts 1px, active presses 1px down; touch only gets the press.
           pressed && !inert && { opacity: 0.9, transform: [{ translateY: 1 }] },
         ]}
