@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#0a1214; }
+  a { color: oklch(0.78 0.11 78); text-decoration: none; }
+  a:hover { color: oklch(0.86 0.09 78); }
+  @keyframes thUp { from { opacity:0; transform: translateY(14px); } to { opacity:1; transform:none; } }
+  @keyframes thIn { from { opacity:0; } to { opacity:1; } }
+  @keyframes thGlow { 0%,100% { opacity:.55; transform: scale(1); } 50% { opacity:.8; transform: scale(1.06); } }
+  @keyframes thPop { from { opacity:0; transform: scale(.86); } to { opacity:1; transform: none; } }
+  @keyframes thRise { from { transform: translateY(100%); } to { transform: none; } }
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:56px 24px;box-sizing:border-box;background:radial-gradient(120% 80% at 50% 0%, #12242a 0%, #0a1214 70%)">
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ isDark }}" hint-size="402px,874px">
+
+  <div style="height:100%;position:relative;overflow:hidden;background:oklch(0.22 0.028 205);font-family:Geist,system-ui,sans-serif;color:oklch(0.96 0.012 85)">
+
+    <sc-if value="{{ isHero }}" hint-placeholder-val="{{ true }}">
+      <div style="height:100%;display:flex;flex-direction:column;padding:0 28px 44px;box-sizing:border-box;animation:thIn .5s ease both">
+        <div style="position:absolute;top:-140px;left:50%;transform:translateX(-50%);width:520px;height:420px;border-radius:50%;background:radial-gradient(closest-side, oklch(0.78 0.11 78 / 0.22), transparent 70%);filter:blur(6px);animation:thGlow 9s ease-in-out infinite;pointer-events:none"></div>
+        <div style="position:relative;padding-top:70px;display:flex;align-items:center;gap:9px">
+          <div style="width:11px;height:11px;border-radius:3px;background:oklch(0.78 0.11 78)"></div>
+          <span style="font:500 13px Geist,system-ui;letter-spacing:0.14em;text-transform:uppercase;color:oklch(0.72 0.02 205)">Threshold</span>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;padding-bottom:20px">
+          <h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:52px;line-height:1.0;letter-spacing:-0.01em;text-wrap:pretty">Keep the money you didn't mean to spend.</h1>
+          <p style="margin:26px 0 0;max-width:300px;font:300 16.5px/1.55 Geist,system-ui;color:oklch(0.78 0.018 205);text-wrap:pretty">One calm screen appears before your shopping and delivery apps open. Nothing is blocked — you just get a moment to decide.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;position:relative">
+          <button type="button" onClick="{{ begin }}" style="appearance:none;border:0;width:100%;padding:19px;border-radius:18px;background:oklch(0.96 0.012 85);color:oklch(0.22 0.028 205);font:500 17px Geist,system-ui;letter-spacing:-0.01em;cursor:pointer;transition:transform .18s ease,opacity .18s ease" style-hover="opacity:.9;transform:translateY(-1px)" style-active="transform:translateY(1px)">Begin</button>
+          <div style="text-align:center;font:400 14px Geist,system-ui;color:oklch(0.62 0.02 205)">Takes about a minute. No account yet.</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isApps }}">
+      <div style="height:100%;display:flex;flex-direction:column;padding:0 24px 44px;box-sizing:border-box;animation:thUp .45s cubic-bezier(.2,.8,.2,1) both">
+        <div style="padding-top:66px;display:flex;align-items:center;gap:14px">
+          <button type="button" onClick="{{ back }}" style="appearance:none;border:0;background:transparent;padding:0;width:28px;height:28px;color:oklch(0.72 0.02 205);font:400 20px Geist,system-ui;cursor:pointer;text-align:left">←</button>
+          <div style="flex:1;display:flex;gap:5px">
+            <sc-for list="{{ steps }}" as="s" hint-placeholder-count="3">
+              <div style="flex:1;height:2px;border-radius:2px;background:{{ s.bg }}"></div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="padding-top:34px">
+          <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:34px;line-height:1.1">Which apps tend to get you?</h2>
+          <p style="margin:10px 0 0;font:300 15px/1.5 Geist,system-ui;color:oklch(0.7 0.02 205)">Pick as many as feel true.</p>
+        </div>
+        <div style="flex:1;overflow:auto;margin-top:24px;padding-bottom:8px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <sc-for list="{{ cats }}" as="c" hint-placeholder-count="6">
+              <button type="button" onClick="{{ c.toggle }}" style="appearance:none;text-align:left;cursor:pointer;padding:14px 13px;border-radius:15px;border:1px solid {{ c.border }};background:{{ c.bg }};display:flex;flex-direction:column;gap:11px;transition:background .2s ease,border-color .2s ease">
+                <div style="width:30px;height:30px;border-radius:9px;background:{{ c.tile }};display:flex;align-items:center;justify-content:center;font:500 11px 'Geist Mono',monospace;color:{{ c.tileText }}">{{ c.code }}</div>
+                <span style="font:400 14.5px/1.25 Geist,system-ui;color:{{ c.text }}">{{ c.label }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="opacity:{{ appsReady }};transition:opacity .3s ease">
+          <button type="button" onClick="{{ next }}" style="appearance:none;border:0;width:100%;padding:19px;border-radius:18px;background:oklch(0.96 0.012 85);color:oklch(0.22 0.028 205);font:500 17px Geist,system-ui;cursor:pointer" style-hover="opacity:.9">Continue</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isFreq }}">
+      <div style="height:100%;display:flex;flex-direction:column;padding:0 24px 44px;box-sizing:border-box;animation:thUp .45s cubic-bezier(.2,.8,.2,1) both">
+        <div style="padding-top:66px;display:flex;align-items:center;gap:14px">
+          <button type="button" onClick="{{ back }}" style="appearance:none;border:0;background:transparent;padding:0;width:28px;height:28px;color:oklch(0.72 0.02 205);font:400 20px Geist,system-ui;cursor:pointer;text-align:left">←</button>
+          <div style="flex:1;display:flex;gap:5px">
+            <sc-for list="{{ steps }}" as="s" hint-placeholder-count="3">
+              <div style="flex:1;height:2px;border-radius:2px;background:{{ s.bg }}"></div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="padding-top:34px">
+          <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:34px;line-height:1.1">How often does an order slip through?</h2>
+          <p style="margin:10px 0 0;font:300 15px/1.5 Geist,system-ui;color:oklch(0.7 0.02 205)">A rough guess is plenty.</p>
+        </div>
+        <div style="flex:1;margin-top:26px;display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ freqs }}" as="f" hint-placeholder-count="4">
+            <button type="button" onClick="{{ f.pick }}" style="appearance:none;cursor:pointer;width:100%;padding:18px 18px;border-radius:16px;border:1px solid {{ f.border }};background:{{ f.bg }};display:flex;align-items:center;justify-content:space-between;gap:12px;transition:background .2s ease,border-color .2s ease">
+              <span style="font:400 16px Geist,system-ui;color:{{ f.text }};text-align:left">{{ f.label }}</span>
+              <span style="font:500 12px 'Geist Mono',monospace;color:{{ f.hintColor }}">{{ f.hint }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="opacity:{{ freqReady }};transition:opacity .3s ease">
+          <button type="button" onClick="{{ next }}" style="appearance:none;border:0;width:100%;padding:19px;border-radius:18px;background:oklch(0.96 0.012 85);color:oklch(0.22 0.028 205);font:500 17px Geist,system-ui;cursor:pointer" style-hover="opacity:.9">Continue</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isRegret }}">
+      <div style="height:100%;display:flex;flex-direction:column;padding:0 24px 44px;box-sizing:border-box;animation:thUp .45s cubic-bezier(.2,.8,.2,1) both">
+        <div style="padding-top:66px;display:flex;align-items:center;gap:14px">
+          <button type="button" onClick="{{ back }}" style="appearance:none;border:0;background:transparent;padding:0;width:28px;height:28px;color:oklch(0.72 0.02 205);font:400 20px Geist,system-ui;cursor:pointer;text-align:left">←</button>
+          <div style="flex:1;display:flex;gap:5px">
+            <sc-for list="{{ steps }}" as="s" hint-placeholder-count="3">
+              <div style="flex:1;height:2px;border-radius:2px;background:{{ s.bg }}"></div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="padding-top:34px">
+          <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:34px;line-height:1.1">Think of one you'd take back.</h2>
+          <p style="margin:10px 0 0;font:300 15px/1.5 Geist,system-ui;color:oklch(0.7 0.02 205)">Only you see this. It sets your starting number.</p>
+        </div>
+        <sc-if value="{{ askItem }}">
+          <div style="margin-top:24px;border-bottom:1px solid oklch(0.4 0.02 205);padding-bottom:10px">
+            <input value="{{ item }}" onChange="{{ setItem }}" placeholder="the thing itself, if you want" style="width:100%;box-sizing:border-box;appearance:none;border:0;background:transparent;outline:none;color:oklch(0.96 0.012 85);font:400 19px 'Instrument Serif',Georgia,serif;padding:0"></input>
+          </div>
+        </sc-if>
+        <div style="flex:1;margin-top:30px">
+          <div style="font:500 11px 'Geist Mono',monospace;letter-spacing:0.1em;color:oklch(0.62 0.02 205);text-transform:uppercase">About what did it cost?</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
+            <sc-for list="{{ amounts }}" as="a" hint-placeholder-count="4">
+              <button type="button" onClick="{{ a.pick }}" style="appearance:none;cursor:pointer;padding:20px 14px;border-radius:16px;border:1px solid {{ a.border }};background:{{ a.bg }};font-family:'Instrument Serif',Georgia,serif;font-size:22px;color:{{ a.text }};transition:background .2s ease,border-color .2s ease">{{ a.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="opacity:{{ amtReady }};transition:opacity .3s ease">
+          <button type="button" onClick="{{ next }}" style="appearance:none;border:0;width:100%;padding:19px;border-radius:18px;background:oklch(0.96 0.012 85);color:oklch(0.22 0.028 205);font:500 17px Geist,system-ui;cursor:pointer" style-hover="opacity:.9">See my number</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isPayoff }}">
+      <div style="height:100%;display:flex;flex-direction:column;padding:0 26px 44px;box-sizing:border-box;position:relative;overflow:hidden;animation:thIn .6s ease both">
+        <div style="position:absolute;bottom:-180px;left:50%;transform:translateX(-50%);width:560px;height:460px;border-radius:50%;background:radial-gradient(closest-side, oklch(0.78 0.11 78 / 0.16), transparent 70%);pointer-events:none"></div>
+        <div style="padding-top:74px;font:500 11px 'Geist Mono',monospace;letter-spacing:0.14em;color:oklch(0.66 0.02 205);text-transform:uppercase">{{ payoffCaption }}</div>
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;padding-bottom:12px">
+          <div style="display:flex;align-items:flex-start;gap:4px;color:oklch(0.82 0.11 78)">
+            <span style="font-family:'Instrument Serif',Georgia,serif;font-size:44px;line-height:1;padding-top:14px">$</span>
+            <span style="font-family:'Instrument Serif',Georgia,serif;font-size:104px;line-height:0.92;letter-spacing:-0.02em">{{ shownAmount }}</span>
+          </div>
+          <div style="margin-top:8px;font:400 17px Geist,system-ui;color:oklch(0.9 0.012 85)">{{ payoffSub }}</div>
+          <p style="margin:22px 0 0;font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:23px;line-height:1.32;color:oklch(0.82 0.018 205);text-wrap:pretty">{{ tangible }}</p>
+        </div>
+        <div style="position:relative;border-top:1px solid oklch(0.34 0.02 205);padding-top:16px;display:flex;flex-direction:column;gap:9px;margin-bottom:22px">
+          <sc-for list="{{ breakdown }}" as="b" hint-placeholder-count="3">
+            <div style="display:flex;justify-content:space-between;gap:14px;font:400 13px Geist,system-ui;color:oklch(0.68 0.02 205)">
+              <span>{{ b.k }}</span>
+              <span style="color:oklch(0.88 0.012 85);font-family:'Geist Mono',monospace;font-size:12px;text-align:right">{{ b.v }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="position:relative;display:flex;flex-direction:column;gap:12px">
+          <button type="button" onClick="{{ next }}" style="appearance:none;border:0;width:100%;padding:19px;border-radius:18px;background:oklch(0.82 0.11 78);color:oklch(0.2 0.03 205);font:500 17px Geist,system-ui;cursor:pointer;transition:transform .18s ease,opacity .18s ease" style-hover="opacity:.92;transform:translateY(-1px)">Set up my pause</button>
+          <button type="button" onClick="{{ back }}" style="appearance:none;border:0;background:transparent;width:100%;padding:2px;font:400 14px Geist,system-ui;color:oklch(0.62 0.02 205);cursor:pointer">Adjust my answers</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isTrust }}">
+      <div style="height:100%;display:flex;flex-direction:column;padding:0 26px 44px;box-sizing:border-box;animation:thUp .45s cubic-bezier(.2,.8,.2,1) both">
+        <div style="padding-top:66px;display:flex;align-items:center;gap:14px">
+          <button type="button" onClick="{{ back }}" style="appearance:none;border:0;background:transparent;padding:0;width:28px;height:28px;color:oklch(0.72 0.02 205);font:400 20px Geist,system-ui;cursor:pointer;text-align:left">←</button>
+          <span style="font:500 11px 'Geist Mono',monospace;letter-spacing:0.14em;color:oklch(0.6 0.02 205);text-transform:uppercase">Setup 1 of 4</span>
+        </div>
+        <h2 style="margin:26px 0 0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:34px;line-height:1.1">Here is exactly what Threshold sees.</h2>
+        <div style="margin-top:26px;display:flex;align-items:center;gap:9px">
+          <div style="flex:1;padding:11px 8px;border-radius:11px;background:oklch(0.27 0.028 205);text-align:center;font:400 12.5px Geist,system-ui;color:oklch(0.86 0.018 205)">You tap the app</div>
+          <span style="font:400 12px 'Geist Mono',monospace;color:oklch(0.55 0.02 205)">→</span>
+          <div style="flex:1;padding:11px 8px;border-radius:11px;background:oklch(0.78 0.11 78 / 0.18);border:1px solid oklch(0.78 0.11 78 / 0.55);text-align:center;font:400 12.5px Geist,system-ui;color:oklch(0.96 0.012 85)">Pause</div>
+          <span style="font:400 12px 'Geist Mono',monospace;color:oklch(0.55 0.02 205)">→</span>
+          <div style="flex:1;padding:11px 8px;border-radius:11px;background:oklch(0.27 0.028 205);text-align:center;font:400 12.5px Geist,system-ui;color:oklch(0.86 0.018 205)">App opens</div>
+        </div>
+        <div style="flex:1;margin-top:8px;display:flex;flex-direction:column">
+          <sc-for list="{{ trustRows }}" as="t" hint-placeholder-count="3">
+            <div style="padding:20px 0;border-bottom:1px solid oklch(0.3 0.02 205)">
+              <div style="display:flex;align-items:baseline;gap:11px">
+                <div style="width:6px;height:6px;border-radius:2px;background:{{ t.dot }};flex:none;transform:translateY(-3px)"></div>
+                <div style="font:400 16.5px/1.3 Geist,system-ui;color:oklch(0.95 0.012 85)">{{ t.t }}</div>
+              </div>
+              <div style="margin:6px 0 0 17px;font:300 14.5px/1.5 Geist,system-ui;color:oklch(0.7 0.02 205);text-wrap:pretty">{{ t.d }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <button type="button" onClick="{{ next }}" style="appearance:none;border:0;width:100%;padding:19px;border-radius:18px;background:oklch(0.96 0.012 85);color:oklch(0.22 0.028 205);font:500 17px Geist,system-ui;cursor:pointer" style-hover="opacity:.9">Continue</button>
+        <div style="margin-top:12px;text-align:center;font:400 13px Geist,system-ui;color:oklch(0.6 0.02 205)">iOS will ask next. You can turn it off in Settings anytime.</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isPermission }}">
+      <div style="height:100%;position:relative;animation:thIn .4s ease both">
+        <div style="height:100%;display:flex;flex-direction:column;padding:0 26px 44px;box-sizing:border-box;filter:blur(2px);opacity:.4">
+          <div style="padding-top:66px;font:500 11px 'Geist Mono',monospace;letter-spacing:0.14em;color:oklch(0.6 0.02 205);text-transform:uppercase">Setup 2 of 4</div>
+          <h2 style="margin:26px 0 0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:34px;line-height:1.1">One permission, then you're through.</h2>
+        </div>
+        <div style="position:absolute;inset:0;background:rgba(6,14,16,0.55);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px;box-sizing:border-box;gap:18px">
+          <div style="width:272px;padding:22px 18px;border-radius:14px;border:1px dashed oklch(0.62 0.02 205 / 0.7);background:oklch(0.3 0.02 205 / 0.5);text-align:center;animation:thPop .35s cubic-bezier(.2,.8,.2,1) both">
+            <div style="font:500 10.5px 'Geist Mono',monospace;letter-spacing:0.1em;color:oklch(0.82 0.11 78);text-transform:uppercase">Native dialog</div>
+            <div style="margin-top:10px;font:400 15px/1.4 Geist,system-ui;color:oklch(0.94 0.012 85)">Apple FamilyControls<br>authorization request</div>
+            <div style="margin-top:10px;font:300 12.5px/1.45 'Geist Mono',monospace;color:oklch(0.68 0.02 205)">Not designed by us — system-owned copy and buttons</div>
+          </div>
+          <div style="width:272px;display:flex;flex-direction:column;gap:9px">
+            <button type="button" onClick="{{ next }}" style="appearance:none;border:0;width:100%;padding:15px;border-radius:14px;background:oklch(0.96 0.012 85);color:oklch(0.22 0.028 205);font:500 15px Geist,system-ui;cursor:pointer" style-hover="opacity:.9">Simulate “Continue”</button>
+            <div style="text-align:center;font:400 12.5px/1.4 Geist,system-ui;color:oklch(0.7 0.02 205)">If they decline, we return to the trust screen — never a dead end.</div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isPicker }}">
+      <div style="height:100%;display:flex;flex-direction:column;padding:0 22px 44px;box-sizing:border-box;animation:thUp .45s cubic-bezier(.2,.8,.2,1) both">
+        <div style="padding-top:66px;display:flex;align-items:center;gap:14px">
+          <button type="button" onClick="{{ back }}" style="appearance:none;border:0;background:transparent;padding:0;width:28px;height:28px;color:oklch(0.72 0.02 205);font:400 20px Geist,system-ui;cursor:pointer;text-align:left">←</button>
+          <span style="font:500 11px 'Geist Mono',monospace;letter-spacing:0.14em;color:oklch(0.6 0.02 205);text-transform:uppercase">Setup 3 of 4</span>
+        </div>
+        <div style="padding:22px 4px 0">
+          <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:30px;line-height:1.12">Pick the one that costs you most.</h2>
+          <p style="margin:9px 0 0;font:300 14.5px/1.5 Geist,system-ui;color:oklch(0.7 0.02 205)">Free plan watches one app. You can swap it whenever.</p>
+        </div>
+        <button type="button" onClick="{{ togglePick }}" style="appearance:none;cursor:pointer;flex:1;margin-top:18px;border-radius:16px;border:1px dashed oklch(0.55 0.02 205 / 0.75);background:oklch(0.26 0.024 205 / 0.6);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px">
+          <div style="font:500 10.5px 'Geist Mono',monospace;letter-spacing:0.1em;color:oklch(0.82 0.11 78);text-transform:uppercase">Native picker</div>
+          <div style="font:400 16px/1.4 Geist,system-ui;color:oklch(0.94 0.012 85);text-align:center">Apple FamilyActivityPicker<br>fills this area</div>
+          <div style="font:300 12.5px/1.5 'Geist Mono',monospace;color:oklch(0.66 0.02 205);text-align:center;max-width:230px">Real app names and icons are only visible inside Apple's own list. Tap to simulate a choice.</div>
+        </button>
+        <div style="margin-top:14px;padding:15px 16px;border-radius:15px;border:1px solid {{ pickBorder }};background:{{ pickBg }};display:flex;align-items:center;gap:12px;transition:background .25s ease,border-color .25s ease">
+          <div style="width:32px;height:32px;border-radius:9px;background:{{ pickTile }};display:flex;align-items:center;justify-content:center;font:500 11px 'Geist Mono',monospace;color:oklch(0.24 0.03 205)">{{ pickCode }}</div>
+          <div style="flex:1">
+            <div style="font:400 15px Geist,system-ui;color:oklch(0.95 0.012 85)">{{ pickTitle }}</div>
+            <div style="margin-top:2px;font:300 12.5px Geist,system-ui;color:oklch(0.66 0.02 205)">{{ pickSub }}</div>
+          </div>
+        </div>
+        <div style="margin-top:14px;opacity:{{ pickReady }};transition:opacity .3s ease">
+          <button type="button" onClick="{{ next }}" style="appearance:none;border:0;width:100%;padding:19px;border-radius:18px;background:oklch(0.96 0.012 85);color:oklch(0.22 0.028 205);font:500 17px Geist,system-ui;cursor:pointer" style-hover="opacity:.9">Continue</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isFriction }}">
+      <div style="height:100%;display:flex;flex-direction:column;padding:0 26px 44px;box-sizing:border-box;animation:thUp .45s cubic-bezier(.2,.8,.2,1) both">
+        <div style="padding-top:66px;display:flex;align-items:center;gap:14px">
+          <button type="button" onClick="{{ back }}" style="appearance:none;border:0;background:transparent;padding:0;width:28px;height:28px;color:oklch(0.72 0.02 205);font:400 20px Geist,system-ui;cursor:pointer;text-align:left">←</button>
+          <span style="font:500 11px 'Geist Mono',monospace;letter-spacing:0.14em;color:oklch(0.6 0.02 205);text-transform:uppercase">Setup 4 of 4</span>
+        </div>
+        <h2 style="margin:26px 0 0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:32px;line-height:1.12">Your pause is ten seconds.</h2>
+        <p style="margin:9px 0 0;font:300 15px/1.5 Geist,system-ui;color:oklch(0.7 0.02 205);max-width:300px">Long enough to notice the urge, short enough that a real errand isn't a fight.</p>
+        <div style="margin-top:22px;padding:22px;border-radius:18px;background:oklch(0.27 0.028 205);display:flex;align-items:center;gap:18px">
+          <div style="font-family:'Instrument Serif',Georgia,serif;font-size:54px;line-height:1;color:oklch(0.82 0.11 78)">10</div>
+          <div>
+            <div style="font:400 15px Geist,system-ui;color:oklch(0.95 0.012 85)">seconds, then your choice</div>
+            <div style="margin-top:4px;font:300 13px/1.4 Geist,system-ui;color:oklch(0.68 0.02 205)">Plus one optional question: what are you here for?</div>
+          </div>
+        </div>
+        <div style="flex:1;margin-top:24px">
+          <div style="font:500 11px 'Geist Mono',monospace;letter-spacing:0.1em;color:oklch(0.6 0.02 205);text-transform:uppercase">Adjustable on Pro</div>
+          <div style="margin-top:10px;display:flex;flex-direction:column">
+            <sc-for list="{{ proRows }}" as="r" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid oklch(0.29 0.02 205)">
+                <span style="flex:1;font:400 15px Geist,system-ui;color:oklch(0.78 0.018 205)">{{ r.t }}</span>
+                <span style="font:500 10px 'Geist Mono',monospace;letter-spacing:0.08em;padding:4px 7px;border-radius:6px;background:oklch(0.78 0.11 78 / 0.16);color:oklch(0.82 0.11 78)">PRO</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <button type="button" onClick="{{ next }}" style="appearance:none;border:0;width:100%;padding:19px;border-radius:18px;background:oklch(0.96 0.012 85);color:oklch(0.22 0.028 205);font:500 17px Geist,system-ui;cursor:pointer" style-hover="opacity:.9">Try it once, right now</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isShield }}">
+      <div style="height:100%;position:relative;overflow:hidden;background:oklch(0.2 0.03 205)">
+        <sc-if value="{{ shieldLaunch }}">
+          <div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;animation:thIn .3s ease both">
+            <div style="width:68px;height:68px;border-radius:17px;background:oklch(0.34 0.024 205);display:flex;align-items:center;justify-content:center;font:500 13px 'Geist Mono',monospace;color:oklch(0.8 0.018 205);animation:thPop .5s cubic-bezier(.2,.8,.2,1) both">SHOP</div>
+            <div style="font:400 13px Geist,system-ui;color:oklch(0.66 0.02 205)">Opening your shopping app…</div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ shieldOn }}">
+          <div style="position:absolute;inset:0;padding:0 28px 44px;box-sizing:border-box;display:flex;flex-direction:column;background:oklch(0.24 0.03 205);animation:thRise .5s cubic-bezier(.2,.85,.2,1) both">
+            <div style="position:absolute;top:-160px;left:50%;transform:translateX(-50%);width:520px;height:400px;border-radius:50%;background:radial-gradient(closest-side, oklch(0.78 0.11 78 / 0.18), transparent 70%);pointer-events:none"></div>
+            <div style="padding-top:72px;position:relative;display:flex;align-items:center;gap:9px">
+              <div style="width:9px;height:9px;border-radius:3px;background:oklch(0.82 0.11 78)"></div>
+              <span style="font:500 11px 'Geist Mono',monospace;letter-spacing:0.14em;color:oklch(0.7 0.02 205);text-transform:uppercase">Threshold · practice run</span>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;position:relative">
+              <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:40px;line-height:1.06;text-wrap:pretty">{{ shieldHeadline }}</h2>
+              <p style="margin:16px 0 0;font:300 15.5px/1.5 Geist,system-ui;color:oklch(0.76 0.018 205);max-width:290px;text-wrap:pretty">{{ shieldBody }}</p>
+              <div style="margin-top:30px">
+                <div style="height:2px;border-radius:2px;background:oklch(0.34 0.02 205);overflow:hidden">
+                  <div style="height:100%;background:oklch(0.82 0.11 78);width:{{ countWidth }};transition:width .95s linear"></div>
+                </div>
+                <div style="margin-top:10px;display:flex;justify-content:space-between;font:500 11px 'Geist Mono',monospace;letter-spacing:0.1em;color:oklch(0.66 0.02 205);text-transform:uppercase">
+                  <span>{{ countLabel }}</span>
+                  <span>{{ pickCode }} · $48 typical</span>
+                </div>
+              </div>
+            </div>
+            <div style="position:relative;display:flex;flex-direction:column;gap:11px">
+              <button type="button" onClick="{{ closeApp }}" style="appearance:none;border:0;width:100%;padding:19px;border-radius:18px;background:oklch(0.82 0.11 78);color:oklch(0.2 0.03 205);font:500 17px Geist,system-ui;cursor:pointer" style-hover="opacity:.92">Not now, put it back</button>
+              <button type="button" onClick="{{ openAnyway }}" style="appearance:none;width:100%;padding:17px;border-radius:18px;border:1px solid {{ openBorder }};background:transparent;color:{{ openColor }};font:400 15.5px Geist,system-ui;cursor:{{ openCursor }};transition:color .4s ease,border-color .4s ease">{{ openLabel }}</button>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ shieldResolved }}">
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;box-sizing:border-box;animation:thIn .45s ease both">
+            <div style="font-family:'Instrument Serif',Georgia,serif;font-size:34px;line-height:1.15;color:oklch(0.96 0.012 85);text-wrap:pretty">{{ resolvedTitle }}</div>
+            <div style="margin-top:12px;font:300 15px/1.5 Geist,system-ui;color:oklch(0.72 0.02 205);max-width:250px">{{ resolvedBody }}</div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isPaywall }}">
+      <div style="height:100%;display:flex;flex-direction:column;padding:0 24px 44px;box-sizing:border-box;overflow:auto;animation:thUp .5s cubic-bezier(.2,.8,.2,1) both">
+        <div style="padding-top:66px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font:500 11px 'Geist Mono',monospace;letter-spacing:0.14em;color:oklch(0.6 0.02 205);text-transform:uppercase">Threshold Pro</span>
+          <button type="button" onClick="{{ next }}" style="appearance:none;border:0;background:transparent;padding:0;font:400 14px Geist,system-ui;color:oklch(0.62 0.02 205);cursor:pointer">Not now</button>
+        </div>
+        <h2 style="margin:20px 0 0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:33px;line-height:1.1">That worked once. Pro makes it hold.</h2>
+        <div style="margin-top:22px;border:1px solid oklch(0.3 0.02 205);border-radius:16px;overflow:hidden">
+          <div style="display:grid;grid-template-columns:1.35fr 0.7fr 0.9fr;padding:11px 14px;background:oklch(0.27 0.028 205);font:500 10.5px 'Geist Mono',monospace;letter-spacing:0.08em;color:oklch(0.68 0.02 205);text-transform:uppercase">
+            <span></span><span style="text-align:center">Free</span><span style="text-align:center;color:oklch(0.82 0.11 78)">Pro</span>
+          </div>
+          <sc-for list="{{ compare }}" as="c" hint-placeholder-count="5">
+            <div style="display:grid;grid-template-columns:1.35fr 0.7fr 0.9fr;align-items:center;gap:6px;padding:13px 14px;border-top:1px solid oklch(0.28 0.02 205)">
+              <span style="font:400 13.5px/1.3 Geist,system-ui;color:oklch(0.9 0.012 85)">{{ c.k }}</span>
+              <span style="text-align:center;font:400 12.5px 'Geist Mono',monospace;color:oklch(0.62 0.02 205)">{{ c.free }}</span>
+              <span style="text-align:center;font:400 12.5px/1.25 'Geist Mono',monospace;color:oklch(0.86 0.09 78)">{{ c.pro }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="margin-top:18px;display:flex;gap:9px">
+          <sc-for list="{{ plans }}" as="p" hint-placeholder-count="2">
+            <button type="button" onClick="{{ p.pick }}" style="appearance:none;cursor:pointer;flex:1;text-align:left;padding:15px 15px;border-radius:15px;border:1px solid {{ p.border }};background:{{ p.bg }};transition:background .2s ease,border-color .2s ease">
+              <div style="font:500 12px 'Geist Mono',monospace;letter-spacing:0.08em;color:{{ p.tagColor }};text-transform:uppercase">{{ p.tag }}</div>
+              <div style="margin-top:7px;font-family:'Instrument Serif',Georgia,serif;font-size:26px;line-height:1;color:oklch(0.96 0.012 85)">{{ p.price }}</div>
+              <div style="margin-top:5px;font:300 12px Geist,system-ui;color:oklch(0.68 0.02 205)">{{ p.note }}</div>
+            </button>
+          </sc-for>
+        </div>
+        <div style="margin-top:20px;display:flex;flex-direction:column;gap:11px">
+          <button type="button" onClick="{{ next }}" style="appearance:none;border:0;width:100%;padding:19px;border-radius:18px;background:oklch(0.82 0.11 78);color:oklch(0.2 0.03 205);font:500 17px Geist,system-ui;cursor:pointer;transition:transform .18s ease,opacity .18s ease" style-hover="opacity:.92;transform:translateY(-1px)">{{ payCta }}</button>
+          <div style="text-align:center;font:400 12.5px/1.45 Geist,system-ui;color:oklch(0.6 0.02 205)">{{ payFine }}</div>
+          <button type="button" onClick="{{ next }}" style="appearance:none;border:0;background:transparent;width:100%;padding:4px;font:400 14px Geist,system-ui;color:oklch(0.68 0.02 205);cursor:pointer" style-hover="color:oklch(0.9 0.012 85)">Stay on free — one app, ten seconds</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isHandoff }}">
+      <div style="height:100%;display:flex;flex-direction:column;padding:0 26px 44px;box-sizing:border-box;animation:thUp .45s cubic-bezier(.2,.8,.2,1) both">
+        <div style="padding-top:74px;font:500 11px 'Geist Mono',monospace;letter-spacing:0.14em;color:oklch(0.66 0.02 205);text-transform:uppercase">You're set</div>
+        <h2 style="margin:14px 0 0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:36px;line-height:1.08">Your pause is live.</h2>
+        <div style="flex:1;margin-top:30px;display:flex;flex-direction:column;gap:1px">
+          <sc-for list="{{ upNext }}" as="u" hint-placeholder-count="3">
+            <div style="display:flex;gap:16px;align-items:baseline;padding:18px 0;border-bottom:1px solid oklch(0.3 0.02 205)">
+              <span style="font:500 12px 'Geist Mono',monospace;color:oklch(0.78 0.11 78)">{{ u.n }}</span>
+              <div>
+                <div style="font:400 16.5px Geist,system-ui;color:oklch(0.94 0.012 85)">{{ u.t }}</div>
+                <div style="margin-top:4px;font:300 14px/1.45 Geist,system-ui;color:oklch(0.66 0.02 205)">{{ u.d }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <button type="button" onClick="{{ restart }}" style="appearance:none;border:1px solid oklch(0.4 0.02 205);width:100%;padding:18px;border-radius:18px;background:transparent;color:oklch(0.9 0.012 85);font:500 16px Geist,system-ui;cursor:pointer" style-hover="background:oklch(0.28 0.03 205)">Replay the flow</button>
+      </div>
+    </sc-if>
+
+  </div>
+</x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:520,&quot;height&quot;:1000},&quot;startScreen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;hero&quot;,&quot;apps&quot;,&quot;frequency&quot;,&quot;regret&quot;,&quot;payoff&quot;,&quot;trust&quot;,&quot;permission&quot;,&quot;picker&quot;,&quot;friction&quot;,&quot;shield&quot;,&quot;paywall&quot;,&quot;handoff&quot;],&quot;default&quot;:&quot;hero&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;estimateTimeframe&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;monthly&quot;,&quot;yearly&quot;],&quot;default&quot;:&quot;monthly&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Payoff&quot;},&quot;askRegretItem&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Questions&quot;}}">
+const ORDER = ["hero", "apps", "frequency", "regret", "payoff", "trust", "permission", "picker", "friction", "shield", "paywall", "handoff"];
+const PAUSE_SECONDS = 8;
+
+const CATS = [
+  { id: "market", code: "MK", label: "Marketplaces" },
+  { id: "fashion", code: "FF", label: "Fast fashion" },
+  { id: "food", code: "FD", label: "Food delivery" },
+  { id: "conv", code: "RC", label: "Rides & convenience" },
+  { id: "resale", code: "RA", label: "Resale & auctions" },
+  { id: "tickets", code: "TT", label: "Tickets & travel" },
+  { id: "games", code: "IG", label: "In-app & games" }
+];
+
+const FREQS = [
+  { id: "daily", label: "Most days", hint: "18 / mo", slips: 18 },
+  { id: "few", label: "A few times a week", hint: "10 / mo", slips: 10 },
+  { id: "weekly", label: "About once a week", hint: "4 / mo", slips: 4 },
+  { id: "mood", label: "Only when I'm bored or stressed", hint: "3 / mo", slips: 3 }
+];
+
+const AMOUNTS = [
+  { id: "a", label: "Under $25", mid: 18 },
+  { id: "b", label: "$25 – $75", mid: 48 },
+  { id: "c", label: "$75 – $150", mid: 108 },
+  { id: "d", label: "$150 +", mid: 210 }
+];
+
+const SEL = { bg: "oklch(0.78 0.11 78 / 0.16)", border: "oklch(0.78 0.11 78 / 0.65)", text: "oklch(0.96 0.012 85)" };
+const OFF = { bg: "oklch(0.26 0.028 205)", border: "oklch(0.26 0.028 205)", text: "oklch(0.84 0.018 205)" };
+
+class Component extends DCLogic {
+  state = {
+    screen: Math.max(0, ORDER.indexOf(this.props.startScreen || "hero")),
+    cats: ["market", "food"],
+    freq: null,
+    amt: null,
+    item: "",
+    shown: 0,
+    picked: false,
+    plan: "annual",
+    phase: "launch",
+    count: PAUSE_SECONDS,
+    outcome: null
+  };
+
+  startShield() {
+    clearInterval(this._tick);
+    clearTimeout(this._lift);
+    this.setState({ phase: "launch", count: PAUSE_SECONDS, outcome: null });
+    this._lift = setTimeout(() => {
+      this.setState({ phase: "shield" });
+      this._tick = setInterval(() => {
+        this.setState(s => {
+          const c = s.count - 1;
+          if (c <= 0) clearInterval(this._tick);
+          return { count: Math.max(0, c) };
+        });
+      }, 1000);
+    }, 900);
+  }
+
+  resolve(outcome) {
+    if (outcome === "open" && this.state.count > 0) return;
+    clearInterval(this._tick);
+    this.setState({ phase: "resolved", outcome });
+    this._lift = setTimeout(() => this.go(1), 1700);
+  }
+
+  componentDidMount() {
+    const n = ORDER[this.state.screen];
+    if (n === "payoff") this.runCount();
+    if (n === "shield") this.startShield();
+  }
+
+  runCount() {
+    const target = this.projection().amount;
+    clearInterval(this._timer);
+    this.setState({ counting: true, shown: 0 });
+    const t0 = Date.now();
+    this._timer = setInterval(() => {
+      const p = Math.min(1, (Date.now() - t0) / 1150);
+      const e = 1 - Math.pow(1 - p, 3);
+      this.setState({ shown: Math.round(target * e) });
+      if (p >= 1) clearInterval(this._timer);
+    }, 24);
+  }
+
+  componentWillUnmount() { clearInterval(this._timer); clearInterval(this._tick); clearTimeout(this._lift); }
+
+  projection() {
+    const f = FREQS.find(x => x.id === this.state.freq) || FREQS[1];
+    const a = AMOUNTS.find(x => x.id === this.state.amt) || AMOUNTS[1];
+    const n = Math.max(1, this.state.cats.length);
+    const breadth = 1 + 0.1 * (n - 1);
+    let monthly = f.slips * a.mid * 0.55 * breadth;
+    monthly = Math.round(monthly / 5) * 5;
+    const yearly = this.props.estimateTimeframe === "yearly";
+    const amount = yearly ? Math.round(monthly * 12 / 10) * 10 : monthly;
+    const items = Math.max(2, Math.round(monthly / a.mid));
+    return { amount, monthly, items, freq: f, avg: a };
+  }
+
+  go(d) {
+    this.setState(
+      s => ({ screen: Math.min(ORDER.length - 1, Math.max(0, s.screen + d)) }),
+      () => {
+        const n = ORDER[this.state.screen];
+        if (n === "payoff") this.runCount();
+        if (n === "shield") this.startShield();
+      }
+    );
+  }
+
+  renderVals() {
+    const s = this.state;
+    const name = ORDER[s.screen];
+    const p = this.projection();
+    const yearly = this.props.estimateTimeframe === "yearly";
+    const foodOnly = s.cats.length > 0 && s.cats.every(c => c === "food" || c === "conv");
+    const unit = foodOnly ? "delivery orders" : "packages";
+    const stepIndex = Math.min(2, Math.max(0, s.screen - 1));
+
+    return {
+      isDark: true,
+      isHero: name === "hero",
+      isApps: name === "apps",
+      isFreq: name === "frequency",
+      isRegret: name === "regret",
+      isPayoff: name === "payoff",
+      isHandoff: name === "handoff",
+      askItem: this.props.askRegretItem !== false,
+      item: s.item,
+      setItem: (e) => this.setState({ item: e.target.value }),
+
+      steps: [0, 1, 2].map(i => ({ bg: i <= stepIndex ? "oklch(0.78 0.11 78)" : "oklch(0.34 0.02 205)" })),
+
+      cats: CATS.map(c => {
+        const on = s.cats.includes(c.id);
+        const t = on ? SEL : OFF;
+        return {
+          ...c, bg: t.bg, border: t.border, text: t.text,
+          tile: on ? "oklch(0.78 0.11 78)" : "oklch(0.32 0.025 205)",
+          tileText: on ? "oklch(0.24 0.03 205)" : "oklch(0.72 0.02 205)",
+          toggle: () => this.setState(st => ({ cats: st.cats.includes(c.id) ? st.cats.filter(x => x !== c.id) : st.cats.concat(c.id) }))
+        };
+      }),
+      freqs: FREQS.map(f => {
+        const on = s.freq === f.id;
+        const t = on ? SEL : OFF;
+        return {
+          label: f.label, hint: f.hint, bg: t.bg, border: t.border, text: t.text,
+          hintColor: on ? "oklch(0.82 0.11 78)" : "oklch(0.6 0.02 205)",
+          pick: () => this.setState({ freq: f.id })
+        };
+      }),
+      amounts: AMOUNTS.map(a => {
+        const on = s.amt === a.id;
+        const t = on ? SEL : OFF;
+        return { label: a.label, bg: t.bg, border: t.border, text: t.text, pick: () => this.setState({ amt: a.id }) };
+      }),
+
+      appsReady: s.cats.length ? 1 : 0.35,
+      freqReady: s.freq ? 1 : 0.35,
+      amtReady: s.amt ? 1 : 0.35,
+
+      shownAmount: (s.counting ? s.shown : p.amount).toLocaleString(),
+      payoffCaption: yearly ? "Your first-year estimate" : "Your monthly estimate",
+      payoffSub: yearly ? "you could keep this year" : "a month you could hold on to",
+      tangible: "That's roughly " + p.items + " fewer " + unit + " arriving in a month" + (s.item.trim() ? " — and one less " + s.item.trim() + "." : "."),
+      breakdown: [
+        { k: "App types watched", v: String(s.cats.length) },
+        { k: "Impulse orders", v: p.freq.hint },
+        { k: "Typical order", v: p.avg.label },
+        { k: "Assumed pause rate", v: "55%" }
+      ],
+      upNext: [
+        { n: "01", t: "One app on pause", d: "Swap which one whenever you like." },
+        { n: "02", t: "Ten seconds, question on", d: "Change it any time from settings." },
+        { n: "03", t: "$0 avoided so far", d: "Your total starts the first time you put something back." }
+      ],
+
+      isTrust: name === "trust",
+      isPermission: name === "permission",
+      isPicker: name === "picker",
+      isFriction: name === "friction",
+      isShield: name === "shield",
+      isPaywall: name === "paywall",
+
+      trustRows: [
+        { dot: "oklch(0.82 0.11 78)", t: "It knows when you tap the icon — nothing more", d: "Screen Time tells us an app is about to open. That signal is the whole mechanic." },
+        { dot: "oklch(0.6 0.02 205)", t: "It cannot see inside the app", d: "No carts, no browsing, no orders, no receipts. Apple never hands that over, and we never ask." },
+        { dot: "oklch(0.6 0.02 205)", t: "Your numbers stay on this phone", d: "The amounts you enter are yours. No bank connection, no card, no purchase history." }
+      ],
+
+      picked: s.picked,
+      togglePick: () => this.setState(st => ({ picked: !st.picked })),
+      pickReady: s.picked ? 1 : 0.35,
+      pickBg: s.picked ? "oklch(0.78 0.11 78 / 0.14)" : "oklch(0.26 0.028 205)",
+      pickBorder: s.picked ? "oklch(0.78 0.11 78 / 0.6)" : "oklch(0.26 0.028 205)",
+      pickTile: s.picked ? "oklch(0.82 0.11 78)" : "oklch(0.34 0.024 205)",
+      pickCode: s.picked ? "SHOP" : "—",
+      pickTitle: s.picked ? "One app selected" : "Nothing selected yet",
+      pickSub: s.picked ? "Threshold will step in front of it" : "Tap the picker above to choose",
+
+      proRows: [
+        { t: "Pause length, 5 seconds to 5 minutes" },
+        { t: "A breathing beat before the buttons" },
+        { t: "Type-to-confirm instead of a tap" },
+        { t: "Re-shield if you're still in there later" },
+        { t: "As many apps as you want watched" }
+      ],
+
+      shieldLaunch: s.phase === "launch",
+      shieldOn: s.phase === "shield",
+      shieldResolved: s.phase === "resolved",
+      shieldHeadline: s.count > 0 ? "Hold on. What are you here for?" : "Still want it?",
+      shieldBody: s.count > 0
+        ? "This is the screen you'll see. In the real thing there's a one-line answer box here — skip it if you're in a rush."
+        : "The door is open either way. No lecture, no streak to break.",
+      countWidth: Math.round(((PAUSE_SECONDS - s.count) / PAUSE_SECONDS) * 100) + "%",
+      countLabel: s.count > 0 ? s.count + " seconds left" : "Pause complete",
+      openLabel: s.count > 0 ? "Continue in " + s.count + "s" : "Continue anyway",
+      openColor: s.count > 0 ? "oklch(0.52 0.02 205)" : "oklch(0.88 0.012 85)",
+      openBorder: s.count > 0 ? "oklch(0.32 0.02 205)" : "oklch(0.48 0.02 205)",
+      openCursor: s.count > 0 ? "default" : "pointer",
+      closeApp: () => this.resolve("close"),
+      openAnyway: () => this.resolve("open"),
+      resolvedTitle: s.outcome === "close" ? "$48 stayed where it was." : "Opened — that's allowed.",
+      resolvedBody: s.outcome === "close"
+        ? "That's your first entry. The total is the only scoreboard Threshold keeps."
+        : "Some carts are errands. Threshold only asks that you meant it.",
+
+      compare: [
+        { k: "Apps watched", free: "1", pro: "Unlimited" },
+        { k: "Pause length", free: "10s", pro: "5s – 5 min" },
+        { k: "Reflection question", free: "Included", pro: "Included" },
+        { k: "Extra step", free: "—", pro: "Breathe or type-to-confirm" },
+        { k: "Mid-session re-shield", free: "—", pro: "Yes" }
+      ],
+      plans: [
+        { tag: "Monthly", price: "$3.99", note: "billed each month", pick: () => this.setState({ plan: "monthly" }), border: s.plan === "monthly" ? SEL.border : OFF.border, bg: s.plan === "monthly" ? SEL.bg : OFF.bg, tagColor: s.plan === "monthly" ? "oklch(0.82 0.11 78)" : "oklch(0.66 0.02 205)" },
+        { tag: "Yearly", price: "$29.99", note: "$2.50 a month", pick: () => this.setState({ plan: "annual" }), border: s.plan === "annual" ? SEL.border : OFF.border, bg: s.plan === "annual" ? SEL.bg : OFF.bg, tagColor: s.plan === "annual" ? "oklch(0.82 0.11 78)" : "oklch(0.66 0.02 205)" }
+      ],
+      payCta: "Start 7 days free",
+      payFine: s.plan === "annual"
+        ? "Then $29.99 a year. Cancel anytime — one tap in Settings."
+        : "Then $3.99 a month. Cancel anytime — one tap in Settings.",
+
+      begin: () => this.go(1),
+      next: () => {
+        if (name === "apps" && !s.cats.length) return;
+        if (name === "frequency" && !s.freq) return;
+        if (name === "regret" && !s.amt) return;
+        if (name === "picker" && !s.picked) return;
+        this.go(1);
+      },
+      back: () => this.go(-1),
+      restart: () => this.setState({ screen: 0, shown: 0, counting: false, picked: false, phase: "launch", count: PAUSE_SECONDS, outcome: null })
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#0a1214; }
+  a { color: oklch(0.78 0.11 78); text-decoration: none; }
+  a:hover { color: oklch(0.86 0.09 78); }
+  @keyframes thIn { from { opacity:0; } to { opacity:1; } }
+  @keyframes thUp { from { opacity:0; transform: translateY(14px); } to { opacity:1; transform:none; } }
+  @keyframes thRise { from { transform: translateY(101%); } to { transform: none; } }
+  @keyframes thPop { from { opacity:0; transform: scale(.9); } to { opacity:1; transform:none; } }
+  @keyframes thBreathe { 0%,100% { opacity:.5; transform: scale(1); } 50% { opacity:.85; transform: scale(1.05); } }
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:56px 24px;box-sizing:border-box;background:radial-gradient(120% 80% at 50% 0%, #12242a 0%, #0a1214 70%)">
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ isDark }}" hint-size="402px,874px">
+
+  <div style="height:100%;position:relative;overflow:hidden;background:oklch(0.22 0.028 205);font-family:Geist,system-ui,sans-serif;color:oklch(0.96 0.012 85)">
+
+    <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+      <div style="height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:0 26px 54px;box-sizing:border-box;background:linear-gradient(180deg, oklch(0.26 0.03 205) 0%, oklch(0.19 0.028 205) 100%);animation:thIn .4s ease both">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px 16px">
+          <sc-for list="{{ homeIcons }}" as="i" hint-placeholder-count="8">
+            <button type="button" onClick="{{ i.tap }}" style="appearance:none;border:0;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:7px">
+              <div style="width:100%;aspect-ratio:1;border-radius:15px;background:{{ i.bg }};border:1px solid {{ i.border }};display:flex;align-items:center;justify-content:center;font:500 10px 'Geist Mono',monospace;color:{{ i.fg }}">{{ i.code }}</div>
+              <span style="font:400 10.5px Geist,system-ui;color:oklch(0.8 0.018 205)">{{ i.label }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="margin-top:34px;display:flex;justify-content:center">
+          <div style="padding:9px 14px;border-radius:999px;background:oklch(0.3 0.02 205 / 0.7);border:1px solid oklch(0.4 0.02 205);font:400 11.5px 'Geist Mono',monospace;color:oklch(0.74 0.02 205)">tap SHOP — it's the monitored one</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isShield }}">
+      <div style="position:absolute;inset:0;padding:0 28px 40px;box-sizing:border-box;display:flex;flex-direction:column;background:oklch(0.235 0.03 205);animation:thRise .52s cubic-bezier(.2,.85,.2,1) both">
+        <div style="position:absolute;top:-170px;left:50%;transform:translateX(-50%);width:540px;height:420px;border-radius:50%;background:radial-gradient(closest-side, oklch(0.78 0.11 78 / 0.2), transparent 70%);animation:thBreathe 8s ease-in-out infinite;pointer-events:none"></div>
+
+        <div style="position:relative;padding-top:70px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <div style="display:flex;align-items:center;gap:9px">
+            <div style="width:9px;height:9px;border-radius:3px;background:oklch(0.82 0.11 78)"></div>
+            <span style="font:500 11px 'Geist Mono',monospace;letter-spacing:0.14em;color:oklch(0.72 0.02 205);text-transform:uppercase">{{ shieldTag }}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 10px 6px 7px;border-radius:999px;background:oklch(0.3 0.024 205)">
+            <div style="width:18px;height:18px;border-radius:5px;background:oklch(0.42 0.024 205);display:flex;align-items:center;justify-content:center;font:500 7.5px 'Geist Mono',monospace;color:oklch(0.86 0.018 205)">SH</div>
+            <span style="font:400 12px Geist,system-ui;color:oklch(0.84 0.018 205)">Shop</span>
+          </div>
+        </div>
+
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;gap:26px">
+          <div style="display:flex;align-items:center;gap:20px">
+            <div style="width:106px;height:106px;flex:none;border-radius:50%;background:conic-gradient(oklch(0.82 0.11 78) {{ ringPct }}, oklch(0.31 0.02 205) 0);display:flex;align-items:center;justify-content:center;transition:background .35s linear">
+              <div style="width:90px;height:90px;border-radius:50%;background:oklch(0.235 0.03 205);display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',Georgia,serif;font-size:38px;color:oklch(0.96 0.012 85)">{{ countText }}</div>
+            </div>
+            <div>
+              <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:31px;line-height:1.08;text-wrap:pretty">{{ shieldHeadline }}</h2>
+              <div style="margin-top:8px;font:300 14px/1.45 Geist,system-ui;color:oklch(0.72 0.02 205)">{{ shieldSub }}</div>
+            </div>
+          </div>
+
+          <sc-if value="{{ showQuestion }}">
+            <div style="padding:18px 18px 14px;border-radius:18px;background:oklch(0.28 0.026 205);border:1px solid oklch(0.34 0.02 205);animation:thPop .4s cubic-bezier(.2,.8,.2,1) both">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px">
+                <span style="font:400 15px Geist,system-ui;color:oklch(0.92 0.012 85)">What are you here for?</span>
+                <button type="button" onClick="{{ skipQuestion }}" style="appearance:none;border:0;background:transparent;padding:0;font:400 12.5px Geist,system-ui;color:oklch(0.66 0.02 205);cursor:pointer" style-hover="color:oklch(0.9 0.012 85)">Skip</button>
+              </div>
+              <input value="{{ intent }}" onChange="{{ setIntent }}" onKeyDown="{{ onIntentKey }}" onBlur="{{ commitIntent }}" placeholder="a phone charger, actually" style="margin-top:12px;width:100%;box-sizing:border-box;appearance:none;border:0;border-bottom:1px solid oklch(0.4 0.02 205);background:transparent;outline:none;padding:0 0 9px;color:oklch(0.96 0.012 85);font:400 18px 'Instrument Serif',Georgia,serif"></input>
+              <div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center;gap:12px">
+                <span style="font:300 12px Geist,system-ui;color:oklch(0.62 0.02 205)">Optional. Nobody reads it but you.</span>
+                <sc-if value="{{ hasIntent }}">
+                  <button type="button" onClick="{{ commitIntent }}" style="appearance:none;border:1px solid oklch(0.78 0.11 78 / 0.5);background:transparent;padding:6px 12px;border-radius:999px;font:500 11.5px 'Geist Mono',monospace;color:oklch(0.84 0.11 78);cursor:pointer" style-hover="background:oklch(0.78 0.11 78 / 0.14)">Done</button>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ intentEchoed }}">
+            <div style="padding:15px 18px;border-radius:18px;background:oklch(0.78 0.11 78 / 0.12);border:1px solid oklch(0.78 0.11 78 / 0.4);animation:thPop .4s ease both">
+              <div style="font:500 10.5px 'Geist Mono',monospace;letter-spacing:0.1em;color:oklch(0.82 0.11 78);text-transform:uppercase">You came for</div>
+              <div style="margin-top:6px;font-family:'Instrument Serif',Georgia,serif;font-size:21px;color:oklch(0.96 0.012 85)">{{ intent }}</div>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="position:relative">
+          <div style="display:flex;gap:10px">
+            <button type="button" onClick="{{ closeApp }}" style="appearance:none;flex:1;cursor:pointer;padding:19px 10px;border-radius:17px;border:1px solid oklch(0.44 0.02 205);background:oklch(0.3 0.026 205);color:oklch(0.96 0.012 85);font:500 16px Geist,system-ui;transition:background .2s ease" style-hover="background:oklch(0.34 0.026 205)">{{ closeLabel }}</button>
+            <button type="button" onClick="{{ continueApp }}" style="appearance:none;flex:1;padding:19px 10px;border-radius:17px;border:1px solid {{ contBorder }};background:{{ contBg }};color:{{ contColor }};font:500 16px Geist,system-ui;cursor:{{ contCursor }};transition:background .3s ease,color .3s ease,border-color .3s ease">{{ contLabel }}</button>
+          </div>
+          <div style="margin-top:14px;display:flex;justify-content:space-between;font:400 11.5px 'Geist Mono',monospace;letter-spacing:0.06em;color:oklch(0.62 0.02 205);text-transform:uppercase">
+            <span>{{ totalLine }}</span>
+            <span>{{ pauseLine }}</span>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isSession }}">
+      <div style="height:100%;position:relative;background:repeating-linear-gradient(135deg, oklch(0.28 0.012 205) 0 9px, oklch(0.25 0.012 205) 9px 18px);animation:thIn .35s ease both">
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:40px;box-sizing:border-box;text-align:center">
+          <div style="font:500 11px 'Geist Mono',monospace;letter-spacing:0.12em;color:oklch(0.7 0.02 205);text-transform:uppercase">Monitored app</div>
+          <div style="font:300 14px/1.5 'Geist Mono',monospace;color:oklch(0.62 0.02 205);max-width:220px">not our surface — the shopping app runs normally here</div>
+        </div>
+        <div style="position:absolute;top:62px;left:0;right:0;display:flex;justify-content:center">
+          <div style="display:flex;align-items:center;gap:9px;padding:9px 14px;border-radius:999px;background:oklch(0.22 0.03 205 / 0.92);border:1px solid oklch(0.38 0.02 205);animation:thPop .4s ease both">
+            <div style="width:7px;height:7px;border-radius:2px;background:oklch(0.82 0.11 78)"></div>
+            <span style="font:400 11.5px 'Geist Mono',monospace;color:oklch(0.82 0.018 205)">{{ sessionPill }}</span>
+          </div>
+        </div>
+        <div style="position:absolute;left:26px;right:26px;bottom:54px;display:flex;flex-direction:column;gap:10px">
+          <sc-if value="{{ noPro }}">
+            <div style="padding:14px 16px;border-radius:15px;background:oklch(0.22 0.03 205 / 0.9);border:1px solid oklch(0.36 0.02 205);font:300 13px/1.45 Geist,system-ui;color:oklch(0.74 0.02 205)">{{ sessionNote }}</div>
+          </sc-if>
+          <button type="button" onClick="{{ leaveApp }}" style="appearance:none;border:1px solid oklch(0.4 0.02 205);width:100%;padding:16px;border-radius:16px;background:oklch(0.22 0.03 205 / 0.9);color:oklch(0.92 0.012 85);font:500 15px Geist,system-ui;cursor:pointer">Leave the app</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isCapture }}">
+      <div style="height:100%;display:flex;flex-direction:column;padding:0 26px 44px;box-sizing:border-box;animation:thUp .45s cubic-bezier(.2,.8,.2,1) both">
+        <div style="padding-top:66px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font:500 11px 'Geist Mono',monospace;letter-spacing:0.14em;color:oklch(0.66 0.02 205);text-transform:uppercase">Closed · nothing bought</span>
+          <button type="button" onClick="{{ skipCapture }}" style="appearance:none;border:0;background:transparent;padding:0;font:400 14.5px Geist,system-ui;color:oklch(0.72 0.02 205);cursor:pointer" style-hover="color:oklch(0.95 0.012 85)">Skip</button>
+        </div>
+        <h2 style="margin:22px 0 0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:33px;line-height:1.1">Want to log what you put back?</h2>
+        <p style="margin:9px 0 0;font:300 15px/1.5 Geist,system-ui;color:oklch(0.7 0.02 205);max-width:300px">Two taps, or skip it — the pause counted either way.</p>
+
+        <div style="margin-top:26px">
+          <div style="font:500 10.5px 'Geist Mono',monospace;letter-spacing:0.1em;color:oklch(0.6 0.02 205);text-transform:uppercase">What was it</div>
+          <div style="margin-top:11px;display:flex;flex-wrap:wrap;gap:8px">
+            <sc-for list="{{ kinds }}" as="k" hint-placeholder-count="5">
+              <button type="button" onClick="{{ k.pick }}" style="appearance:none;cursor:pointer;padding:11px 15px;border-radius:999px;border:1px solid {{ k.border }};background:{{ k.bg }};font:400 14px Geist,system-ui;color:{{ k.text }};transition:background .2s ease,border-color .2s ease">{{ k.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="margin-top:26px;flex:1">
+          <div style="font:500 10.5px 'Geist Mono',monospace;letter-spacing:0.1em;color:oklch(0.6 0.02 205);text-transform:uppercase">Roughly how much</div>
+          <div style="margin-top:11px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+            <sc-for list="{{ sums }}" as="a" hint-placeholder-count="4">
+              <button type="button" onClick="{{ a.pick }}" style="appearance:none;cursor:pointer;padding:16px 4px;border-radius:14px;border:1px solid {{ a.border }};background:{{ a.bg }};font-family:'Instrument Serif',Georgia,serif;font-size:20px;color:{{ a.text }};transition:background .2s ease,border-color .2s ease">{{ a.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="opacity:{{ saveReady }};transition:opacity .3s ease">
+          <button type="button" onClick="{{ save }}" style="appearance:none;border:0;width:100%;padding:19px;border-radius:18px;background:oklch(0.82 0.11 78);color:oklch(0.2 0.03 205);font:500 17px Geist,system-ui;cursor:pointer" style-hover="opacity:.92">{{ saveLabel }}</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isDash }}">
+      <div style="height:100%;display:flex;flex-direction:column;padding:0 24px 40px;box-sizing:border-box;overflow:auto;animation:thUp .45s cubic-bezier(.2,.8,.2,1) both">
+        <div style="padding-top:66px;display:flex;justify-content:space-between;align-items:center">
+          <div style="display:flex;align-items:center;gap:9px">
+            <div style="width:10px;height:10px;border-radius:3px;background:oklch(0.78 0.11 78)"></div>
+            <span style="font:500 11px 'Geist Mono',monospace;letter-spacing:0.14em;color:oklch(0.68 0.02 205);text-transform:uppercase">Threshold</span>
+          </div>
+          <button type="button" onClick="{{ openSettings }}" style="appearance:none;border:0;background:transparent;padding:0;font:400 14px Geist,system-ui;color:oklch(0.72 0.02 205);cursor:pointer" style-hover="color:oklch(0.95 0.012 85)">Settings</button>
+        </div>
+
+        <div style="margin-top:30px">
+          <div style="font:500 10.5px 'Geist Mono',monospace;letter-spacing:0.12em;color:oklch(0.62 0.02 205);text-transform:uppercase">Avoided so far</div>
+          <div style="margin-top:8px;display:flex;align-items:flex-start;gap:3px">
+            <span style="font-family:'Instrument Serif',Georgia,serif;font-size:34px;line-height:1;padding-top:11px;color:oklch(0.82 0.11 78)">$</span>
+            <span style="font-family:'Instrument Serif',Georgia,serif;font-size:84px;line-height:0.92;letter-spacing:-0.02em">{{ dashTotal }}</span>
+          </div>
+        </div>
+
+        <div style="margin-top:26px;display:flex;border-top:1px solid oklch(0.3 0.02 205);border-bottom:1px solid oklch(0.3 0.02 205)">
+          <div style="flex:1;padding:16px 0">
+            <div style="font-family:'Instrument Serif',Georgia,serif;font-size:28px;line-height:1">{{ dashResisted }}</div>
+            <div style="margin-top:4px;font:500 10px 'Geist Mono',monospace;letter-spacing:0.1em;color:oklch(0.62 0.02 205);text-transform:uppercase">Times resisted</div>
+          </div>
+          <div style="width:1px;background:oklch(0.3 0.02 205)"></div>
+          <div style="flex:1;padding:16px 0 16px 18px">
+            <div style="font-family:'Instrument Serif',Georgia,serif;font-size:28px;line-height:1">{{ dashStreak }}</div>
+            <div style="margin-top:4px;font:500 10px 'Geist Mono',monospace;letter-spacing:0.1em;color:oklch(0.62 0.02 205);text-transform:uppercase">Day streak</div>
+          </div>
+        </div>
+
+        <button type="button" onClick="{{ openInsights }}" style="appearance:none;cursor:pointer;text-align:left;margin-top:18px;padding:16px 17px;border-radius:16px;background:oklch(0.27 0.026 205);border:1px solid oklch(0.32 0.02 205);display:flex;align-items:center;gap:14px" style-hover="background:oklch(0.3 0.026 205)">
+          <div style="flex:1">
+            <div style="font:500 10px 'Geist Mono',monospace;letter-spacing:0.12em;color:oklch(0.82 0.11 78);text-transform:uppercase">This week's pattern</div>
+            <div style="margin-top:6px;font:400 15.5px/1.3 Geist,system-ui;color:oklch(0.95 0.012 85)">Sunday night is your expensive hour.</div>
+          </div>
+          <span style="font:400 16px Geist,system-ui;color:oklch(0.66 0.02 205)">→</span>
+        </button>
+
+        <div style="margin-top:26px;display:flex;justify-content:space-between;align-items:baseline">
+          <span style="font:500 10.5px 'Geist Mono',monospace;letter-spacing:0.12em;color:oklch(0.62 0.02 205);text-transform:uppercase">Recent pauses</span>
+          <span style="font:400 12px Geist,system-ui;color:oklch(0.58 0.02 205)">{{ historyNote }}</span>
+        </div>
+        <div style="margin-top:6px;display:flex;flex-direction:column">
+          <sc-for list="{{ history }}" as="h" hint-placeholder-count="6">
+            <div style="display:flex;align-items:center;gap:13px;padding:15px 0;border-bottom:1px solid oklch(0.29 0.02 205)">
+              <div style="width:30px;height:30px;flex:none;border-radius:9px;background:oklch(0.32 0.02 205);display:flex;align-items:center;justify-content:center;font:500 8.5px 'Geist Mono',monospace;color:oklch(0.8 0.018 205)">{{ h.app }}</div>
+              <div style="flex:1;min-width:0">
+                <div style="font:400 15px Geist,system-ui;color:oklch(0.94 0.012 85)">{{ h.label }}</div>
+                <div style="margin-top:3px;font:300 12.5px Geist,system-ui;color:oklch(0.64 0.02 205)">{{ h.when }}</div>
+              </div>
+              <span style="font:500 12px 'Geist Mono',monospace;color:{{ h.color }};text-align:right">{{ h.value }}</span>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="margin-top:24px;display:flex;justify-content:center">
+          <button type="button" onClick="{{ toSpringboard }}" style="appearance:none;border:1px solid oklch(0.34 0.02 205);background:transparent;padding:9px 14px;border-radius:999px;font:400 11.5px 'Geist Mono',monospace;color:oklch(0.66 0.02 205);cursor:pointer" style-hover="color:oklch(0.9 0.012 85)">back to the phone home screen</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isSettings }}">
+      <div style="height:100%;display:flex;flex-direction:column;padding:0 24px 40px;box-sizing:border-box;overflow:auto;animation:thUp .4s cubic-bezier(.2,.8,.2,1) both">
+        <div style="padding-top:66px;display:flex;align-items:center;gap:14px">
+          <button type="button" onClick="{{ openDash }}" style="appearance:none;border:0;background:transparent;padding:0;width:28px;height:28px;color:oklch(0.72 0.02 205);font:400 20px Geist,system-ui;cursor:pointer;text-align:left">←</button>
+          <span style="font:500 11px 'Geist Mono',monospace;letter-spacing:0.14em;color:oklch(0.64 0.02 205);text-transform:uppercase">Settings</span>
+        </div>
+
+        <div style="margin-top:26px;display:flex;justify-content:space-between;align-items:baseline">
+          <span style="font:400 17px Geist,system-ui;color:oklch(0.95 0.012 85)">Monitored apps</span>
+          <span style="font:400 12px 'Geist Mono',monospace;color:oklch(0.62 0.02 205)">{{ appsNote }}</span>
+        </div>
+        <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
+          <sc-for list="{{ monitored }}" as="m" hint-placeholder-count="2">
+            <div style="display:flex;align-items:center;gap:12px;padding:14px 15px;border-radius:15px;background:oklch(0.27 0.026 205)">
+              <div style="width:30px;height:30px;border-radius:9px;background:oklch(0.78 0.11 78 / 0.2);border:1px solid oklch(0.78 0.11 78 / 0.45);display:flex;align-items:center;justify-content:center;font:500 9px 'Geist Mono',monospace;color:oklch(0.86 0.09 78)">{{ m.code }}</div>
+              <span style="flex:1;font:400 15px Geist,system-ui;color:oklch(0.94 0.012 85)">{{ m.label }}</span>
+              <button type="button" onClick="{{ m.remove }}" style="appearance:none;border:0;background:transparent;padding:0;font:400 13.5px Geist,system-ui;color:oklch(0.68 0.02 205);cursor:pointer" style-hover="color:oklch(0.95 0.012 85)">Remove</button>
+            </div>
+          </sc-for>
+          <button type="button" onClick="{{ addApp }}" style="appearance:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:14px 15px;border-radius:15px;border:1px dashed oklch(0.42 0.02 205);background:transparent;text-align:left">
+            <div style="width:30px;height:30px;border-radius:9px;background:oklch(0.3 0.02 205);display:flex;align-items:center;justify-content:center;font:400 16px Geist,system-ui;color:oklch(0.78 0.018 205)">+</div>
+            <span style="flex:1;font:400 15px Geist,system-ui;color:oklch(0.86 0.018 205)">{{ addAppLabel }}</span>
+            <sc-if value="{{ addLocked }}">
+              <span style="font:500 10px 'Geist Mono',monospace;letter-spacing:0.08em;padding:4px 7px;border-radius:6px;background:oklch(0.78 0.11 78 / 0.16);color:oklch(0.82 0.11 78)">PRO</span>
+            </sc-if>
+          </button>
+        </div>
+
+        <div style="margin-top:30px;display:flex;justify-content:space-between;align-items:baseline">
+          <span style="font:400 17px Geist,system-ui;color:oklch(0.95 0.012 85)">Friction</span>
+          <sc-if value="{{ frictionLocked }}">
+            <span style="font:500 10px 'Geist Mono',monospace;letter-spacing:0.08em;padding:4px 7px;border-radius:6px;background:oklch(0.78 0.11 78 / 0.16);color:oklch(0.82 0.11 78)">PRO</span>
+          </sc-if>
+        </div>
+        <div style="margin-top:10px;border-radius:16px;background:oklch(0.27 0.026 205);opacity:{{ frictionOpacity }}">
+          <div style="display:flex;align-items:center;gap:12px;padding:16px 15px;border-bottom:1px solid oklch(0.31 0.02 205)">
+            <div style="flex:1">
+              <div style="font:400 15px Geist,system-ui;color:oklch(0.94 0.012 85)">Pause length</div>
+              <div style="margin-top:3px;font:300 12.5px Geist,system-ui;color:oklch(0.64 0.02 205)">How long the shield holds before the buttons unlock</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;flex:none">
+              <button type="button" onClick="{{ lessPause }}" style="appearance:none;width:30px;height:30px;border-radius:9px;border:1px solid oklch(0.42 0.02 205);background:transparent;color:oklch(0.9 0.012 85);font:400 15px Geist,system-ui;cursor:pointer">−</button>
+              <span style="min-width:44px;text-align:center;font:500 14px 'Geist Mono',monospace;color:oklch(0.86 0.09 78)">{{ pauseText }}</span>
+              <button type="button" onClick="{{ morePause }}" style="appearance:none;width:30px;height:30px;border-radius:9px;border:1px solid oklch(0.42 0.02 205);background:transparent;color:oklch(0.9 0.012 85);font:400 15px Geist,system-ui;cursor:pointer">+</button>
+            </div>
+          </div>
+          <div style="padding:16px 15px;border-bottom:1px solid oklch(0.31 0.02 205)">
+            <div style="font:400 15px Geist,system-ui;color:oklch(0.94 0.012 85)">Extra step</div>
+            <div style="margin-top:3px;font:300 12.5px Geist,system-ui;color:oklch(0.64 0.02 205)">One more beat before Continue works</div>
+            <div style="margin-top:12px;display:flex;gap:7px">
+              <sc-for list="{{ extras }}" as="x" hint-placeholder-count="3">
+                <button type="button" onClick="{{ x.pick }}" style="appearance:none;cursor:pointer;flex:1;padding:11px 6px;border-radius:11px;border:1px solid {{ x.border }};background:{{ x.bg }};font:400 12.5px Geist,system-ui;color:{{ x.text }};transition:background .2s ease,border-color .2s ease">{{ x.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:16px 15px">
+            <div style="flex:1">
+              <div style="font:400 15px Geist,system-ui;color:oklch(0.94 0.012 85)">Mid-session re-shield</div>
+              <div style="margin-top:3px;font:300 12.5px Geist,system-ui;color:oklch(0.64 0.02 205)">{{ reshieldSub }}</div>
+            </div>
+            <button type="button" onClick="{{ toggleReshield }}" style="appearance:none;border:0;cursor:pointer;flex:none;width:48px;height:29px;border-radius:999px;padding:3px;background:{{ reshieldTrack }};display:flex;justify-content:{{ reshieldAlign }};transition:background .25s ease">
+              <div style="width:23px;height:23px;border-radius:50%;background:oklch(0.97 0.012 85)"></div>
+            </button>
+          </div>
+        </div>
+
+        <div style="margin-top:30px;font:400 17px Geist,system-ui;color:oklch(0.95 0.012 85)">Verify with email</div>
+        <div style="margin-top:6px;font:300 13.5px/1.5 Geist,system-ui;color:oklch(0.68 0.02 205);text-wrap:pretty">Optional. Connect the inbox your order confirmations land in and Threshold can check your avoided total against what actually shipped. It reads confirmation subject lines and nothing else.</div>
+        <sc-if value="{{ emailPending }}">
+          <div style="margin-top:14px;display:flex;gap:8px">
+            <input value="{{ email }}" onChange="{{ setEmail }}" onKeyDown="{{ onEmailKey }}" placeholder="you@email.com" style="flex:1;min-width:0;box-sizing:border-box;appearance:none;border:1px solid oklch(0.38 0.02 205);border-radius:14px;background:oklch(0.26 0.024 205);outline:none;padding:15px 14px;color:oklch(0.96 0.012 85);font:400 15px Geist,system-ui"></input>
+            <button type="button" onClick="{{ sendLink }}" style="appearance:none;border:0;flex:none;padding:15px 17px;border-radius:14px;background:oklch(0.96 0.012 85);color:oklch(0.22 0.028 205);font:500 14.5px Geist,system-ui;cursor:pointer;opacity:{{ emailReady }}">Send link</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ emailSent }}">
+          <div style="margin-top:14px;padding:15px 16px;border-radius:14px;background:oklch(0.78 0.11 78 / 0.12);border:1px solid oklch(0.78 0.11 78 / 0.4);display:flex;align-items:center;gap:12px">
+            <div style="flex:1;font:400 14px/1.4 Geist,system-ui;color:oklch(0.94 0.012 85)">{{ emailSentText }}</div>
+            <button type="button" onClick="{{ undoEmail }}" style="appearance:none;border:0;background:transparent;padding:0;font:400 13px Geist,system-ui;color:oklch(0.72 0.02 205);cursor:pointer">Undo</button>
+          </div>
+        </sc-if>
+
+        <div style="margin-top:30px;padding-top:18px;border-top:1px solid oklch(0.3 0.02 205);font:300 12px/1.5 'Geist Mono',monospace;color:oklch(0.56 0.02 205)">Threshold 1.0 · your amounts and patterns stay on this phone unless you connect an inbox above.</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isMilestone }}">
+      <div style="height:100%;position:relative;overflow:hidden;background:linear-gradient(165deg, oklch(0.87 0.13 84) 0%, oklch(0.77 0.12 68) 100%);color:oklch(0.22 0.03 205);animation:thIn .35s ease both">
+        <div style="position:absolute;top:-90px;right:-120px;width:420px;height:420px;border-radius:50%;background:radial-gradient(closest-side, oklch(0.95 0.09 92 / 0.75), transparent 70%);animation:thBreathe 7s ease-in-out infinite;pointer-events:none"></div>
+        <div style="position:absolute;left:9px;bottom:120px;transform-origin:left bottom;transform:rotate(-90deg);white-space:nowrap;font:500 12px 'Geist Mono',monospace;letter-spacing:0.42em;opacity:.32;text-transform:uppercase;pointer-events:none">{{ msRail }}</div>
+        <div style="position:relative;height:100%;display:flex;flex-direction:column;padding:0 30px 44px;box-sizing:border-box">
+          <div style="padding-top:72px;display:flex;align-items:center;gap:9px">
+            <div style="width:10px;height:10px;border-radius:3px;background:oklch(0.22 0.03 205)"></div>
+            <span style="font:500 11px 'Geist Mono',monospace;letter-spacing:0.16em;text-transform:uppercase">{{ msTag }}</span>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding-bottom:16px">
+            <div style="display:flex;align-items:flex-start;gap:4px;animation:thPop .6s cubic-bezier(.2,.9,.2,1) both">
+              <span style="font-family:'Instrument Serif',Georgia,serif;font-size:52px;line-height:1;padding-top:20px">$</span>
+              <span style="font-family:'Instrument Serif',Georgia,serif;font-size:132px;line-height:0.86;letter-spacing:-0.03em">{{ msNumber }}</span>
+            </div>
+            <div style="margin-top:6px;font:500 16px Geist,system-ui;animation:thUp .6s .1s cubic-bezier(.2,.9,.2,1) both">{{ msHeadline }}</div>
+            <p style="margin:22px 0 0;font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:25px;line-height:1.28;max-width:290px;text-wrap:pretty;animation:thUp .6s .18s cubic-bezier(.2,.9,.2,1) both">{{ msTangible }}</p>
+            <div style="margin-top:26px;display:flex;gap:22px;animation:thUp .6s .26s cubic-bezier(.2,.9,.2,1) both">
+              <sc-for list="{{ msStats }}" as="m" hint-placeholder-count="3">
+                <div>
+                  <div style="font-family:'Instrument Serif',Georgia,serif;font-size:27px;line-height:1">{{ m.v }}</div>
+                  <div style="margin-top:3px;font:500 10px 'Geist Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;opacity:.7">{{ m.k }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <button type="button" onClick="{{ openInsights }}" style="appearance:none;border:0;width:100%;padding:19px;border-radius:18px;background:oklch(0.22 0.03 205);color:oklch(0.95 0.03 84);font:500 17px Geist,system-ui;cursor:pointer;transition:transform .18s ease" style-hover="transform:translateY(-1px)">See the pattern behind it</button>
+            <button type="button" onClick="{{ dismissMilestone }}" style="appearance:none;border:1px solid oklch(0.22 0.03 205 / 0.35);background:transparent;width:100%;padding:16px;border-radius:18px;font:500 15px Geist,system-ui;color:oklch(0.22 0.03 205);cursor:pointer" style-hover="background:oklch(0.22 0.03 205 / 0.08)">Done</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isInsights }}">
+      <div style="height:100%;display:flex;flex-direction:column;padding:0 24px 40px;box-sizing:border-box;overflow:auto;animation:thUp .45s cubic-bezier(.2,.8,.2,1) both">
+        <div style="padding-top:66px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font:500 11px 'Geist Mono',monospace;letter-spacing:0.14em;color:oklch(0.64 0.02 205);text-transform:uppercase">{{ insightStamp }}</span>
+          <button type="button" onClick="{{ closeInsights }}" style="appearance:none;border:0;background:transparent;padding:0;font:400 14.5px Geist,system-ui;color:oklch(0.72 0.02 205);cursor:pointer" style-hover="color:oklch(0.95 0.012 85)">Close</button>
+        </div>
+
+        <h2 style="margin:22px 0 0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:32px;line-height:1.12;text-wrap:pretty">{{ leadInsight }}</h2>
+        <p style="margin:12px 0 0;font:300 14.5px/1.55 Geist,system-ui;color:oklch(0.74 0.02 205);text-wrap:pretty">{{ leadEvidence }}</p>
+
+        <div style="margin-top:22px;padding:18px 16px 14px;border-radius:16px;background:oklch(0.26 0.026 205)">
+          <div style="display:flex;align-items:flex-end;gap:7px;height:74px">
+            <sc-for list="{{ week }}" as="d" hint-placeholder-count="7">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;justify-content:flex-end;height:100%">
+                <div style="width:100%;border-radius:5px;background:{{ d.bg }};height:{{ d.h }};min-height:4px;transition:height .5s ease"></div>
+                <span style="font:500 10px 'Geist Mono',monospace;color:{{ d.fg }}">{{ d.d }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:12px;font:300 12px/1.4 Geist,system-ui;color:oklch(0.64 0.02 205)">Pauses by day, last four weeks. Sunday is nearly double any other night.</div>
+        </div>
+
+        <div style="margin-top:22px;display:flex;flex-direction:column">
+          <sc-for list="{{ insights }}" as="i" hint-placeholder-count="3">
+            <div style="padding:18px 0;border-top:1px solid oklch(0.3 0.02 205)">
+              <div style="font:500 10px 'Geist Mono',monospace;letter-spacing:0.12em;color:oklch(0.78 0.11 78);text-transform:uppercase">{{ i.tag }}</div>
+              <div style="margin-top:8px;font:400 16.5px/1.35 Geist,system-ui;color:oklch(0.95 0.012 85);text-wrap:pretty">{{ i.t }}</div>
+              <div style="margin-top:6px;font:300 14px/1.5 Geist,system-ui;color:oklch(0.7 0.02 205);text-wrap:pretty">{{ i.d }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="margin-top:24px;padding:20px 18px;border-radius:18px;background:oklch(0.78 0.11 78 / 0.12);border:1px solid oklch(0.78 0.11 78 / 0.42)">
+          <div style="font:500 10px 'Geist Mono',monospace;letter-spacing:0.12em;color:oklch(0.84 0.11 78);text-transform:uppercase">Suggested change</div>
+          <div style="margin-top:9px;font:400 17px/1.35 Geist,system-ui;color:oklch(0.96 0.012 85);text-wrap:pretty">{{ suggestionText }}</div>
+          <div style="margin-top:16px;display:flex;gap:9px">
+            <button type="button" onClick="{{ applySuggestion }}" style="appearance:none;border:0;flex:1;padding:15px;border-radius:14px;background:oklch(0.82 0.11 78);color:oklch(0.2 0.03 205);font:500 15px Geist,system-ui;cursor:pointer" style-hover="opacity:.92">{{ suggestionCta }}</button>
+            <button type="button" onClick="{{ closeInsights }}" style="appearance:none;border:1px solid oklch(0.44 0.02 205);flex:none;padding:15px 18px;border-radius:14px;background:transparent;color:oklch(0.86 0.018 205);font:400 15px Geist,system-ui;cursor:pointer">Not now</button>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;font:300 12px/1.5 Geist,system-ui;color:oklch(0.58 0.02 205)">Patterns come from your pause history on this phone. Nothing about what you browse or buy leaves it.</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isSaved }}">
+      <div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:44px;box-sizing:border-box;position:relative;animation:thIn .45s ease both">
+        <div style="position:absolute;bottom:-160px;left:50%;transform:translateX(-50%);width:520px;height:420px;border-radius:50%;background:radial-gradient(closest-side, oklch(0.78 0.11 78 / 0.15), transparent 70%);pointer-events:none"></div>
+        <div style="position:relative;font:500 11px 'Geist Mono',monospace;letter-spacing:0.14em;color:oklch(0.68 0.02 205);text-transform:uppercase">Total avoided</div>
+        <div style="position:relative;margin-top:14px;display:flex;align-items:flex-start;gap:3px;color:oklch(0.84 0.11 78)">
+          <span style="font-family:'Instrument Serif',Georgia,serif;font-size:36px;line-height:1;padding-top:12px">$</span>
+          <span style="font-family:'Instrument Serif',Georgia,serif;font-size:90px;line-height:0.94">{{ shownTotal }}</span>
+        </div>
+        <div style="position:relative;margin-top:14px;font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:21px;line-height:1.35;color:oklch(0.84 0.018 205);max-width:260px;text-wrap:pretty">{{ savedLine }}</div>
+      </div>
+    </sc-if>
+
+  </div>
+</x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:520,&quot;height&quot;:1000},&quot;pauseSeconds&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:10,&quot;min&quot;:3,&quot;max&quot;:30,&quot;step&quot;:1,&quot;unit&quot;:&quot;s&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Friction&quot;},&quot;reshieldAfterSeconds&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:8,&quot;min&quot;:4,&quot;max&quot;:60,&quot;step&quot;:1,&quot;unit&quot;:&quot;s&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Friction&quot;},&quot;showReflection&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Friction&quot;},&quot;proEnabled&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Plan&quot;},&quot;forceMilestone&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Prototype&quot;}}">
+const KINDS = [
+  { id: "clothes", label: "Clothes", phrase: "clothes that aren't arriving in a bag you'd forget about" },
+  { id: "gadget", label: "Gadget", phrase: "a gadget that isn't showing up at your door" },
+  { id: "home", label: "Home stuff", phrase: "one less thing to find a place for" },
+  { id: "food", label: "Takeout", phrase: "a dinner you'll make instead" },
+  { id: "other", label: "Something else", phrase: "one fewer box on the doorstep this week" }
+];
+const SUMS = [
+  { id: "s1", label: "$15", v: 15 },
+  { id: "s2", label: "$30", v: 30 },
+  { id: "s3", label: "$60", v: 60 },
+  { id: "s4", label: "$120", v: 120 }
+];
+const APPS = [
+  { code: "MAIL", label: "Mail" },
+  { code: "MAPS", label: "Maps" },
+  { code: "MSG", label: "Messages" },
+  { code: "CAM", label: "Camera" },
+  { code: "SHOP", label: "Shop", monitored: true },
+  { code: "MUS", label: "Music" },
+  { code: "NOTE", label: "Notes" },
+  { code: "THR", label: "Threshold" }
+];
+
+const MILESTONES = [50, 100, 200, 250, 500, 1000];
+const HISTORY = [
+  { app: "SHOP", label: "Closed after 10 seconds", when: "Yesterday, 10:42pm", value: "+$60", closed: true },
+  { app: "FOOD", label: "Continued through", when: "Yesterday, 7:15pm", value: "continued", closed: false },
+  { app: "SHOP", label: "Closed after 4 seconds", when: "Sunday, 11:08pm", value: "+$30", closed: true },
+  { app: "SHOP", label: "Continued through", when: "Sunday, 9:51pm", value: "continued", closed: false },
+  { app: "FOOD", label: "Closed after 10 seconds", when: "Saturday, 8:30pm", value: "+$25", closed: true },
+  { app: "SHOP", label: "Closed after 22 seconds", when: "Friday, 1:12pm", value: "+$15", closed: true }
+];
+const EXTRAS = [
+  { id: "none", label: "None" },
+  { id: "breathe", label: "Breathe" },
+  { id: "type", label: "Type to confirm" }
+];
+const WEEK = [
+  { d: "M", v: 0.34 }, { d: "T", v: 0.28 }, { d: "W", v: 0.4 }, { d: "T", v: 0.3 },
+  { d: "F", v: 0.62 }, { d: "S", v: 0.5 }, { d: "S", v: 1, peak: true }
+];
+
+const SEL = { bg: "oklch(0.78 0.11 78 / 0.16)", border: "oklch(0.78 0.11 78 / 0.65)", text: "oklch(0.96 0.012 85)" };
+const OFF = { bg: "oklch(0.27 0.028 205)", border: "oklch(0.27 0.028 205)", text: "oklch(0.84 0.018 205)" };
+
+class Component extends DCLogic {
+  state = {
+    view: "home",
+    mode: "first",
+    count: 10,
+    askQ: true,
+    intent: "",
+    committed: false,
+    kind: null,
+    sum: null,
+    total: 168,
+    pauses: 12,
+    shownTotal: 168,
+    sessionLeft: 0,
+    milestone: 200,
+    applied: false,
+    apps: [{ code: "SHOP", label: "Shop" }],
+    pauseSet: null,
+    extra: "none",
+    reshieldOn: true,
+    email: "",
+    emailSent: false
+  };
+
+  get pauseLen() { return Math.round(this.state.pauseSet ?? this.props.pauseSeconds ?? 10); }
+  get reshieldAfter() { return Math.round(this.props.reshieldAfterSeconds ?? 8); }
+  get pro() { return this.props.proEnabled !== false; }
+  get reshieldActive() { return this.pro && this.state.reshieldOn; }
+
+  clearAll() { clearInterval(this._tick); clearInterval(this._sess); clearInterval(this._num); clearTimeout(this._to); }
+  componentWillUnmount() { this.clearAll(); }
+
+  openShield(mode) {
+    this.clearAll();
+    this.setState({
+      view: "shield", mode, count: this.pauseLen,
+      askQ: mode === "first" && this.props.showReflection !== false,
+      intent: mode === "first" ? "" : this.state.intent,
+      committed: mode === "re" ? this.state.committed : false
+    });
+    this._tick = setInterval(() => {
+      this.setState(s => {
+        const c = Math.max(0, s.count - 1);
+        if (c === 0) clearInterval(this._tick);
+        return { count: c, committed: c === 0 && s.intent.trim() ? true : s.committed };
+      });
+    }, 1000);
+  }
+
+  enterSession() {
+    this.clearAll();
+    this.setState({ view: "session", sessionLeft: this.reshieldAfter });
+    if (!this.reshieldActive) return;
+    this._sess = setInterval(() => {
+      this.setState(s => {
+        const c = Math.max(0, s.sessionLeft - 1);
+        return { sessionLeft: c };
+      }, () => { if (this.state.sessionLeft === 0) { clearInterval(this._sess); this.openShield("re"); } });
+    }, 1000);
+  }
+
+  saveEntry() {
+    const a = SUMS.find(x => x.id === this.state.sum);
+    if (!a) return;
+    this.clearAll();
+    const from = this.state.total;
+    const to = from + a.v;
+    const crossed = MILESTONES.filter(m => m > from && m <= to).pop();
+    if (crossed || this.props.forceMilestone) {
+      this.setState({ view: "milestone", total: to, pauses: this.state.pauses + 1, milestone: crossed || 250 });
+      return;
+    }
+    this.setState({ view: "saved", total: to, pauses: this.state.pauses + 1, shownTotal: from });
+    const t0 = Date.now();
+    this._num = setInterval(() => {
+      const p = Math.min(1, (Date.now() - t0) / 900);
+      const e = 1 - Math.pow(1 - p, 3);
+      this.setState({ shownTotal: Math.round(from + (to - from) * e) });
+      if (p >= 1) clearInterval(this._num);
+    }, 24);
+    this._to = setTimeout(() => this.setState({ view: "home", kind: null, sum: null, intent: "" }), 2600);
+  }
+
+  goHome() {
+    this.clearAll();
+    this.setState(s => ({ view: "home", kind: null, sum: null, intent: "", pauses: s.pauses + (s.view === "capture" ? 1 : 0) }));
+  }
+
+  renderVals() {
+    const s = this.state;
+    const len = this.pauseLen;
+    const done = s.count === 0;
+    const re = s.mode === "re";
+    const pick = SUMS.find(x => x.id === s.sum);
+    const kind = KINDS.find(x => x.id === s.kind);
+
+    return {
+      isDark: true,
+      isHome: s.view === "home",
+      isShield: s.view === "shield",
+      isSession: s.view === "session",
+      isCapture: s.view === "capture",
+      isSaved: s.view === "saved",
+
+      homeIcons: APPS.map(a => ({
+        code: a.code, label: a.label,
+        bg: a.monitored ? "oklch(0.78 0.11 78 / 0.18)" : "oklch(0.32 0.02 205)",
+        border: a.monitored ? "oklch(0.78 0.11 78 / 0.6)" : "oklch(0.36 0.02 205)",
+        fg: a.monitored ? "oklch(0.88 0.09 78)" : "oklch(0.78 0.018 205)",
+        tap: () => {
+          if (a.monitored) this.openShield("first");
+          else if (a.code === "THR") this.setState({ view: "dash" });
+        }
+      })),
+
+      isDash: s.view === "dash",
+      isSettings: s.view === "settings",
+      dashTotal: s.total.toLocaleString(),
+      dashResisted: String(s.pauses),
+      dashStreak: "9",
+      historyNote: "last 4 days",
+      history: HISTORY.map(h => ({
+        app: h.app, label: h.label, when: h.when, value: h.value,
+        color: h.closed ? "oklch(0.84 0.11 78)" : "oklch(0.62 0.02 205)"
+      })),
+      openSettings: () => this.setState({ view: "settings" }),
+      openDash: () => this.setState({ view: "dash" }),
+      toSpringboard: () => this.setState({ view: "home" }),
+
+      monitored: s.apps.map((a, i) => ({
+        code: a.code, label: a.label,
+        remove: () => this.setState(st => ({ apps: st.apps.filter((_, j) => j !== i) }))
+      })),
+      appsNote: this.pro ? s.apps.length + " watched" : s.apps.length + " of 1 on free",
+      addLocked: !this.pro && s.apps.length >= 1,
+      addAppLabel: !this.pro && s.apps.length >= 1 ? "Add another app" : "Add an app",
+      addApp: () => {
+        if (!this.pro && s.apps.length >= 1) return;
+        const pool = [{ code: "FOOD", label: "Food delivery" }, { code: "FAST", label: "Fast fashion" }, { code: "MKT", label: "Marketplace" }];
+        const nextApp = pool.find(p => !s.apps.some(a => a.code === p.code));
+        if (nextApp) this.setState(st => ({ apps: st.apps.concat(nextApp) }));
+      },
+
+      frictionLocked: !this.pro,
+      frictionOpacity: this.pro ? 1 : 0.45,
+      pauseText: len + "s",
+      lessPause: () => { if (this.pro) this.setState({ pauseSet: Math.max(5, len - 5) }); },
+      morePause: () => { if (this.pro) this.setState({ pauseSet: Math.min(300, len + 5) }); },
+      extras: EXTRAS.map(x => {
+        const on = s.extra === x.id, t = on ? SEL : { bg: "oklch(0.31 0.02 205)", border: "oklch(0.31 0.02 205)", text: "oklch(0.84 0.018 205)" };
+        return { label: x.label, bg: t.bg, border: t.border, text: t.text, pick: () => { if (this.pro) this.setState({ extra: x.id }); } };
+      }),
+      reshieldSub: s.reshieldOn ? "Checks back after 5 minutes of continuous use" : "Sessions run uninterrupted",
+      reshieldTrack: s.reshieldOn ? "oklch(0.82 0.11 78)" : "oklch(0.36 0.02 205)",
+      reshieldAlign: s.reshieldOn ? "flex-end" : "flex-start",
+      toggleReshield: () => { if (this.pro) this.setState(st => ({ reshieldOn: !st.reshieldOn })); },
+
+      email: s.email,
+      setEmail: (e) => this.setState({ email: e.target.value }),
+      onEmailKey: (e) => { if (e.key === "Enter" && s.email.includes("@")) this.setState({ emailSent: true }); },
+      emailReady: s.email.includes("@") ? 1 : 0.4,
+      emailPending: !s.emailSent,
+      emailSent: s.emailSent,
+      emailSentText: "Link sent to " + (s.email || "your inbox") + ". Nothing is read until you tap it.",
+      sendLink: () => { if (s.email.includes("@")) this.setState({ emailSent: true }); },
+      undoEmail: () => this.setState({ emailSent: false, email: "" }),
+
+      isMilestone: s.view === "milestone",
+      isInsights: s.view === "insights",
+
+      msRail: "$" + s.milestone + " avoided",
+      msTag: "Milestone · " + (MILESTONES.indexOf(s.milestone) + 1) + " of " + MILESTONES.length,
+      msNumber: String(s.milestone),
+      msHeadline: "avoided since you started",
+      msTangible: s.milestone >= 250
+        ? "That is a month of groceries that stayed in your account instead of arriving in boxes."
+        : "That is a whole weekend of takeout you decided you did not want after all.",
+      msStats: [
+        { v: String(s.pauses), k: "pauses" },
+        { v: "68%", k: "closed" },
+        { v: "9 days", k: "streak" }
+      ],
+      openInsights: () => this.setState({ view: "insights" }),
+      dismissMilestone: () => { this.clearAll(); this.setState({ view: "dash", kind: null, sum: null, intent: "" }); },
+
+      insightStamp: "Pattern found · updated Sunday",
+      leadInsight: "Sunday night is your expensive hour.",
+      leadEvidence: "8 of your last 11 pauses started between 9 and 11pm on a Sunday, and that is also when you continue most often — 5 of those 8.",
+      week: WEEK.map(w => ({
+        d: w.d, h: Math.round(w.v * 100) + "%",
+        bg: w.peak ? "oklch(0.82 0.11 78)" : "oklch(0.4 0.024 205)",
+        fg: w.peak ? "oklch(0.84 0.11 78)" : "oklch(0.6 0.02 205)"
+      })),
+      insights: [
+        { tag: "Holds up", t: "Answering the question doubles your close rate.", d: "When you type what you came for, you close 4 times out of 5. When you skip it, closer to 2." },
+        { tag: "Fastest yes", t: "Takeout gets through in under 20 seconds.", d: "Your food orders almost never wait out the pause. Everything else usually does." },
+        { tag: "Quietest week", t: "Payday week is calmer than you would guess.", d: "Your pauses cluster four to six days after payday, not on it." }
+      ],
+      suggestionText: s.applied
+        ? "Sunday evenings now hold for 60 seconds, 9 to 11pm."
+        : "Want a 60-second pause on Sunday evenings, and ten seconds the rest of the week?",
+      suggestionCta: s.applied ? "Applied" : "Set it up",
+      applySuggestion: () => this.setState({ applied: true }),
+      closeInsights: () => { this.clearAll(); this.setState({ view: "dash" }); },
+
+      shieldTag: re ? "Threshold · re-shield" : "Threshold · pause",
+      shieldHeadline: re
+        ? (done ? "Still worth it?" : "You've been in here a while.")
+        : (done ? "Your call." : len + " seconds, then it's yours."),
+      shieldSub: re
+        ? "Pro re-shield, set for 5 minutes of continuous use."
+        : (done ? "Both doors are open. Pick the one you meant." : "Shop opens the moment the ring fills, if you still want it."),
+      countText: done ? "0" : String(s.count),
+      ringPct: Math.round(((len - s.count) / len) * 360) + "deg",
+
+      showQuestion: s.askQ && !s.committed,
+      intentEchoed: s.committed && !!s.intent.trim(),
+      intent: s.intent,
+      hasIntent: !!s.intent.trim(),
+      setIntent: (e) => this.setState({ intent: e.target.value }),
+      commitIntent: () => { if (s.intent.trim()) this.setState({ committed: true }); },
+      onIntentKey: (e) => { if (e.key === "Enter" && s.intent.trim()) this.setState({ committed: true }); },
+      skipQuestion: () => this.setState({ askQ: false, committed: false }),
+
+      closeLabel: re ? "Close app" : "Close app",
+      contLabel: done ? (re ? "Keep going" : "Continue") : "Continue in " + s.count + "s",
+      contBg: done ? "oklch(0.3 0.026 205)" : "oklch(0.25 0.022 205)",
+      contBorder: done ? "oklch(0.44 0.02 205)" : "oklch(0.32 0.02 205)",
+      contColor: done ? "oklch(0.96 0.012 85)" : "oklch(0.55 0.02 205)",
+      contCursor: done ? "pointer" : "default",
+      closeApp: () => this.setState({ view: "capture" }),
+      continueApp: () => { if (done) this.enterSession(); },
+      totalLine: "$" + s.total.toLocaleString() + " avoided",
+      pauseLine: s.pauses + " pauses this month",
+
+      sessionPill: this.reshieldActive
+        ? (s.sessionLeft > 0 ? "Threshold checks back in " + s.sessionLeft + "s" : "checking back now")
+        : "Threshold is watching this session",
+      noPro: !this.reshieldActive,
+      sessionNote: this.pro
+        ? "Mid-session re-shield is off in your settings. This session runs uninterrupted."
+        : "Mid-session re-shield is a Pro step. On free, this session runs uninterrupted.",
+      leaveApp: () => this.goHome(),
+
+      kinds: KINDS.map(k => {
+        const on = s.kind === k.id, t = on ? SEL : OFF;
+        return { label: k.label, bg: t.bg, border: t.border, text: t.text, pick: () => this.setState({ kind: k.id }) };
+      }),
+      sums: SUMS.map(a => {
+        const on = s.sum === a.id, t = on ? SEL : OFF;
+        return { label: a.label, bg: t.bg, border: t.border, text: t.text, pick: () => this.setState({ sum: a.id }) };
+      }),
+      saveReady: pick ? 1 : 0.35,
+      saveLabel: pick ? "Log $" + pick.v + " avoided" : "Pick an amount",
+      save: () => this.saveEntry(),
+      skipCapture: () => this.goHome(),
+
+      shownTotal: s.shownTotal.toLocaleString(),
+      savedLine: kind ? "That's " + kind.phrase + "." : "One fewer box on the doorstep this week."
+    };
+  }
+}
+</script>
+</body>
+</html>
