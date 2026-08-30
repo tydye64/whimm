@@ -2,14 +2,21 @@
  * Screen 12 — setup complete.
  *
  * States what is now true rather than congratulating anyone, and is honest that
- * the total starts at zero. Pass 3 replaces "Replay the flow" with the real
- * hand-off into the home screen.
+ * the total starts at zero.
+ *
+ * This is where the OS actually starts intercepting: `completeSetup` writes the
+ * shield to the ManagedSettings store. Doing it here rather than at the picker
+ * means nothing is shielded until the user has seen the practice run and the
+ * plan, so the first real interception is never a surprise.
  */
+import { useCallback } from 'react';
+import { useRouter } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Button } from '../../src/components/Button';
 import { Screen } from '../../src/components/Screen';
 import { useFlow } from '../../src/onboarding/state';
+import { useStore } from '../../src/shield/store';
 import { color } from '../../src/theme/colors';
 import { gutter, topOffset } from '../../src/theme/layout';
 import { text as type } from '../../src/theme/type';
@@ -33,7 +40,14 @@ const UP_NEXT = [
 ];
 
 export default function Handoff() {
+  const router = useRouter();
   const { restart } = useFlow();
+  const { completeSetup } = useStore();
+
+  const finish = useCallback(async () => {
+    await completeSetup();
+    router.replace('/home');
+  }, [completeSetup, router]);
 
   return (
     <Screen gutter={gutter.wide} top={topOffset.caption}>
@@ -52,7 +66,10 @@ export default function Handoff() {
         ))}
       </View>
 
-      <Button label="Replay the flow" variant="outline" onPress={restart} />
+      <View style={styles.actions}>
+        <Button label="Done" onPress={finish} />
+        <Button label="Replay the flow" variant="text" onPress={restart} />
+      </View>
     </Screen>
   );
 }
@@ -90,4 +107,5 @@ const styles = StyleSheet.create({
     lineHeight: 14 * 1.45,
     color: color.muted66,
   },
+  actions: { gap: 12 },
 });

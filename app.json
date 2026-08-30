@@ -32,7 +32,17 @@
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
-    "plugins": ["expo-router", "expo-font"],
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "./plugins/withFamilyControls",
+      [
+        "@bacons/apple-targets",
+        {
+          "appleTeamId": "REPLACE_WITH_TEAM_ID"
+        }
+      ]
+    ],
     "experiments": {
       "typedRoutes": true
     }

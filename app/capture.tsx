@@ -13,7 +13,7 @@
  *    continuing, which would invert the whole mechanic.
  */
 import { useState } from 'react';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Button } from '../src/components/Button';
@@ -47,6 +47,7 @@ export const SUMS = [
 export default function Capture() {
   const router = useRouter();
   const { logAvoided } = useStore();
+  const { waited } = useLocalSearchParams<{ waited?: string }>();
   const [kind, setKind] = useState<string | null>(null);
   const [sum, setSum] = useState<string | null>(null);
 
@@ -54,7 +55,11 @@ export default function Capture() {
 
   const save = () => {
     if (!picked) return;
-    const crossed = logAvoided(picked.value, 'Closed');
+    const seconds = Number(waited ?? 0);
+    const crossed = logAvoided(
+      picked.value,
+      seconds > 0 ? `Closed after ${seconds} second${seconds === 1 ? '' : 's'}` : 'Closed',
+    );
     // Most saves land on the quiet confirmation. The loud screen fires only on
     // a genuine crossing, which is what keeps it meaning anything.
     router.replace(

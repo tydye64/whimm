@@ -68,7 +68,13 @@ export default function Shield() {
     }
   }, []);
 
-  const close = () => router.replace('/capture');
+  const close = () =>
+    // How long they actually waited, so the history row can say "Closed after
+    // 4 seconds" rather than a flat "Closed".
+    router.replace({
+      pathname: '/capture',
+      params: { waited: String(length - remaining) },
+    });
   const proceed = () => {
     if (!done) return;
     logContinued();

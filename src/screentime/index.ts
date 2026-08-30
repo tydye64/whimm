@@ -2,12 +2,8 @@
  * The Screen Time seam.
  *
  * Everything the app needs from Apple's FamilyControls / ManagedSettings /
- * DeviceActivity stack goes through this interface, so the screens never learn
+ * DeviceActivity stack goes through this interface, so screens never learn
  * whether they are talking to a real device or to the simulation below.
- *
- * Pass 3 replaces `simulated` with a native module. Until then the simulation
- * reproduces the prototype's behaviour exactly: authorization always succeeds,
- * and the picker returns one app the first time it is opened.
  *
  * A note on what is and is not possible, because it shapes this interface:
  *
@@ -21,18 +17,18 @@
  *    icon, a title, a subtitle and up to two buttons, with system typography.
  *    The designed shield — countdown ring, reflection field, running total —
  *    cannot be drawn there. Its primary button deep-links into the app, and the
- *    real screen renders in-app. `shieldDeepLink` is that hand-off.
+ *    real screen renders in-app. See
+ *    `targets/ShieldConfiguration/ShieldConfigurationExtension.swift`.
  */
+import { ThresholdScreenTime } from '../../modules/threshold-screentime';
 
 export type AuthorizationStatus = 'notDetermined' | 'denied' | 'approved';
 
-/** What the picker gives back: a count, and an opaque selection to persist. */
+/** What the picker gives back: counts, and an opaque handle to persist. */
 export type Selection = {
-  /** Number of individual apps chosen. */
   applications: number;
-  /** Number of whole categories chosen. */
   categories: number;
-  /** Opaque, device-scoped token blob. Meaningless off this phone. */
+  /** Device-scoped handle. Meaningless off this phone. */
   token: string;
 };
 
@@ -41,23 +37,36 @@ export interface ScreenTime {
   getAuthorizationStatus(): Promise<AuthorizationStatus>;
   /** Presents Apple's FamilyControls dialog. Resolves once the user answers. */
   requestAuthorization(): Promise<AuthorizationStatus>;
-  /** Presents FamilyActivityPicker. Resolves null if dismissed without a change. */
+  /** Presents FamilyActivityPicker. Resolves null if dismissed unchanged. */
   presentPicker(current?: Selection | null): Promise<Selection | null>;
   /** Starts intercepting the selected apps. */
   applyShield(selection: Selection): Promise<void>;
   /** Stops intercepting, without clearing the selection. */
   clearShield(): Promise<void>;
+  /** Begins the usage schedule that fires the mid-session re-shield. */
+  startMonitoring(afterSeconds: number): Promise<void>;
+  stopMonitoring(): Promise<void>;
 }
 
+/** Stands in for the beat where system UI is on screen. */
+const settle = () => new Promise<void>((resolve) => setTimeout(resolve, 260));
+
+let simulatedStatus: AuthorizationStatus = 'notDetermined';
+
+/**
+ * Used in Expo Go, on the simulator, and on Android — none of which can present
+ * FamilyControls UI. Reproduces the prototype's behaviour so the whole flow
+ * stays walkable without a provisioned device.
+ */
 const simulated: ScreenTime = {
-  isSupported: () => true,
+  isSupported: () => false,
   async getAuthorizationStatus() {
-    return status;
+    return simulatedStatus;
   },
   async requestAuthorization() {
     await settle();
-    status = 'approved';
-    return status;
+    simulatedStatus = 'approved';
+    return simulatedStatus;
   },
   async presentPicker() {
     await settle();
@@ -69,19 +78,32 @@ const simulated: ScreenTime = {
   async clearShield() {
     await settle();
   },
+  async startMonitoring() {
+    await settle();
+  },
+  async stopMonitoring() {
+    await settle();
+  },
 };
 
-let status: AuthorizationStatus = 'notDetermined';
-
-/** Stands in for the beat where system UI is on screen. */
-const settle = () => new Promise<void>((resolve) => setTimeout(resolve, 260));
+const native: ScreenTime = {
+  isSupported: () => ThresholdScreenTime?.isSupported() ?? false,
+  getAuthorizationStatus: () => ThresholdScreenTime!.getAuthorizationStatus(),
+  requestAuthorization: () => ThresholdScreenTime!.requestAuthorization(),
+  presentPicker: () => ThresholdScreenTime!.presentPicker(),
+  applyShield: () => ThresholdScreenTime!.applyShield(),
+  clearShield: () => ThresholdScreenTime!.clearShield(),
+  startMonitoring: (afterSeconds) => ThresholdScreenTime!.startMonitoring(afterSeconds),
+  stopMonitoring: () => ThresholdScreenTime!.stopMonitoring(),
+};
 
 /**
- * Resolved once at import. Pass 3 swaps this for the native implementation and
- * keeps `simulated` as the fallback for Expo Go and the simulator, neither of
- * which can present FamilyControls UI.
+ * The native module is absent in Expo Go and on Android, and present-but-
+ * unsupported below iOS 16. Both fall back to the simulation rather than
+ * throwing at import.
  */
-export const screenTime: ScreenTime = simulated;
+export const screenTime: ScreenTime =
+  ThresholdScreenTime?.isSupported() ? native : simulated;
 
 /** True while the app is running against the simulation rather than the OS. */
 export const isSimulated = screenTime === simulated;

@@ -4,29 +4,55 @@ The Expo app in this repo implements the designs handed off in `project/`
 (see `README.md` for the bundle, and `chats/chat1.md` for the intent behind
 each screen).
 
-Being built in three passes:
+Built in three passes, all landed:
 
 | Pass | Scope | State |
 | --- | --- | --- |
 | 1 | Foundation — tokens, type, primitives, and all 12 onboarding screens | **done** |
 | 2 | The mechanic — shield, reflection, session, post-close capture, milestone, insights | **done** |
-| 3 | Return screens (home, settings) + real Screen Time wiring | not started |
+| 3 | Return screens (home, settings) + real Screen Time wiring | **done** |
 
 ## Running it
 
 ```bash
 npm install
-npx expo start          # then i / a, or scan with a dev build
 npm run typecheck
+npx expo start --web    # the whole flow, against the Screen Time simulation
 ```
 
-`npx expo start --web` renders everything except the native Screen Time surfaces
-and is how the screens in pass 1 were checked against the artboards. Web has no
-safe-area insets, so vertical spacing at the top of each screen is tighter there
-than on a device — that difference is expected, not a layout bug.
+`--web` renders every screen and is how each one was checked against the
+artboards. Web has no safe-area insets, so vertical spacing at the top of each
+screen is tighter there than on a device — expected, not a layout bug.
 
-Pass 3 introduces native modules, at which point Expo Go stops being enough and
-a development build is required.
+**On a device, Screen Time needs a development build and a provisioned bundle
+ID.** Expo Go cannot host the extensions or the restricted entitlement:
+
+```bash
+npx expo prebuild --platform ios      # generates ios/, including the 3 extensions
+npx expo run:ios --device
+```
+
+Before that will install, three things have to happen outside this repo:
+
+1. Set `appleTeamId` in `app.json` (currently `REPLACE_WITH_TEAM_ID`).
+2. Enable the **Family Controls** capability on the `com.threshold.app`
+   identifier, and create the `group.com.threshold.app` App Group.
+3. Request the **Family Controls (Distribution)** entitlement from Apple for
+   that bundle ID. It is a restricted entitlement and is not granted
+   automatically; distribution builds will not upload without it.
+
+Without all three, the app still runs — `src/screentime` falls back to the
+simulation and the whole flow stays walkable. `/harness` is the fake springboard
+that lets you trigger the shield by hand in that mode.
+
+### What is unverified
+
+The Swift in `modules/` and `targets/` has not been compiled. This work was done
+on Linux, where there is no Xcode and no iOS SDK. What *was* verified is that
+`expo prebuild` generates the three extension targets into the Xcode project,
+embeds them as `.appex` products, links FamilyControls / DeviceActivity /
+ManagedSettingsUI, and writes the entitlements to both the app and each
+extension. Expect to fix compile errors on first build.
 
 ## The one design constraint worth knowing up front
 
@@ -64,14 +90,35 @@ the part that has to carry "this is a pause, not a block".
 ```
 app/                     expo-router routes, one file per screen
   onboarding/            the 12-screen setup flow
+  shield.tsx             the mechanic
+  capture.tsx saved.tsx  post-close logging and its confirmation
+  milestone.tsx          the one loud screen
+  insights.tsx           pattern recognition
+  home.tsx settings.tsx  the everyday return screens
+  session.tsx harness.tsx  stand-ins, not product screens
 src/
   theme/                 colors, type, layout geometry
-  components/            Screen, Button, Nav, Options, Grid, Glow
+  components/            Screen, Button, Nav, Options, Grid, Glow, Ring, Rise
   hooks/                 useCountUp, useCountdown
   onboarding/            flow state + the projection model
   screentime/            the Screen Time seam (see below)
-  shield/                constants shared by onboarding and the real shield
+  shield/                store, persistence, shared constants
+modules/
+  threshold-screentime/  the native module (Swift + JS surface)
+targets/
+  ShieldConfiguration/   the card iOS draws over a monitored app
+  ShieldAction/          what its two buttons do
+  DeviceActivityMonitor/ fires the mid-session re-shield
+plugins/
+  withFamilyControls.js  entitlements + app group for the main app
 ```
+
+### Stand-ins, not product screens
+
+`app/harness.tsx` (a fake iOS springboard) and `app/session.tsx` (the monitored
+app) exist so the mechanic can be driven without a provisioned device. On a real
+build the trigger is DeviceActivity and the "session" is Amazon or DoorDash.
+Neither is reachable from the app's own UI.
 
 ### Colors
 
@@ -95,10 +142,22 @@ iPhone 15/16 and stay correct on other devices.
 ### The Screen Time seam
 
 `src/screentime/index.ts` defines the whole interface the app needs from
-FamilyControls / ManagedSettings / DeviceActivity. Pass 1 ships a simulation
-behind it that reproduces the prototype's behaviour; pass 3 swaps in a native
-module and keeps the simulation as the fallback for Expo Go and the simulator,
-neither of which can present FamilyControls UI. No screen knows the difference.
+FamilyControls / ManagedSettings / DeviceActivity, and picks the native module
+when it is present and supported, the simulation otherwise. No screen knows the
+difference.
+
+The picker returns **opaque tokens**, never bundle IDs or app names, and those
+tokens never cross into JavaScript — they are encoded into the shared app group
+for the extensions to read. That is why every tile in the app shows a category
+code rather than a logo: the information to draw one does not exist outside
+Apple's own picker.
+
+### Storage
+
+`src/shield/persistence.ts` is the entire storage layer: AsyncStorage, on device,
+nothing else. The trust screen promises exactly that in plain language during
+onboarding, so if a future feature needs a server, the trust screen has to change
+first.
 
 ## Deliberate deviations from the prototypes
 
@@ -125,10 +184,21 @@ neither of which can present FamilyControls UI. No screen knows the difference.
 
 ## Open questions for design
 
-1. The Apple-drawn shield card (above) needs copy and an icon.
+1. The Apple-drawn shield card (above) needs sign-off. I wrote placeholder copy
+   — "One moment first." / "Threshold is holding the door for a few seconds.
+   Nothing is blocked." / "Take the pause" / "Not now, put it back" — and it
+   needs a `ShieldMark` icon asset, which does not exist yet. This is the first
+   thing a user sees at the moment of impulse, so it deserves more attention
+   than a placeholder.
 2. `estimateTimeframe` (monthly vs yearly) was a prototype toggle. Pass 1 hard-
    codes monthly in `app/onboarding/payoff.tsx`; if yearly is meant to be a real
    variant, it needs a rule for when it shows.
 3. The paywall's "Not now", "Stay on free" and the back gesture all currently
    lead to the same place. Intended, or should declining Pro land somewhere
    different from completing setup?
+4. The shield's "extra step" setting (breathe / type-to-confirm) is stored and
+   settable but not yet implemented on the shield itself — it was described in
+   the transcript but never designed. Both need a screen before they can ship.
+5. `streak` is hard-coded to 9 on the home and milestone screens. Real streak
+   logic needs a rule: what breaks a streak — a day with no pause, or a day
+   where every pause was continued through?

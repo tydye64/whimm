@@ -8,18 +8,22 @@
  * hook: if a future feature needs one, it needs a design conversation first,
  * not an import.
  *
- * Pass 3 adds persistence behind the same interface.
+ * Persisted to AsyncStorage and nowhere else — see ./persistence.
  */
 import {
   createContext,
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 
-import { DEFAULT_PAUSE_SECONDS } from './model';
+import { screenTime } from '../screentime';
+import { DEFAULT_PAUSE_SECONDS, RESHIELD_AFTER_SECONDS } from './model';
+import { load, save } from './persistence';
 
 /** Thresholds that earn the milestone screen. */
 export const MILESTONES = [50, 100, 200, 250, 500, 1000];
@@ -67,6 +71,12 @@ type Store = {
   settings: Settings;
   pro: boolean;
   setPro: (pro: boolean) => void;
+  /** False until onboarding finishes; drives where the app opens. */
+  setupComplete: boolean;
+  /** Null while the saved state is still being read at boot. */
+  hydrated: boolean;
+  /** Marks setup done and asks the OS to start intercepting. */
+  completeSetup: () => Promise<void>;
   update: (patch: Partial<Settings>) => void;
   /**
    * Records a closed shield. Returns the milestone crossed, if any, so the
@@ -84,6 +94,8 @@ export function ShieldStoreProvider({ children }: { children: ReactNode }) {
   const [pauses, setPauses] = useState(12);
   const [history, setHistory] = useState<ShieldEvent[]>(SEED_HISTORY);
   const [pro, setPro] = useState(true);
+  const [setupComplete, setSetupComplete] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
   const [settings, setSettings] = useState<Settings>({
     pauseSeconds: DEFAULT_PAUSE_SECONDS,
     extraStep: 'none',
@@ -91,11 +103,65 @@ export function ShieldStoreProvider({ children }: { children: ReactNode }) {
     monitoredApps: [{ code: 'SHOP', label: 'Shop' }],
     reflection: true,
   });
+  const hydrated = useRef(false);
+
+  // Rehydrate once at boot. Until this resolves the seeded values stand, so
+  // there is never a frame of $0 on the home screen.
+  useEffect(() => {
+    let cancelled = false;
+    load().then((saved) => {
+      if (cancelled) return;
+      if (saved) {
+        if (saved.totalAvoided !== undefined) setTotal(saved.totalAvoided);
+        if (saved.pauses !== undefined) setPauses(saved.pauses);
+        if (saved.history) setHistory(saved.history);
+        if (saved.pro !== undefined) setPro(saved.pro);
+        if (saved.setupComplete !== undefined) setSetupComplete(saved.setupComplete);
+        if (saved.settings) setSettings((s) => ({ ...s, ...saved.settings } as Settings));
+      }
+      hydrated.current = true;
+      setIsHydrated(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Persist after hydration only, so an early write cannot clobber saved state
+  // with the seed values.
+  useEffect(() => {
+    if (!hydrated.current) return;
+    save({ totalAvoided, pauses, history, settings, pro, setupComplete });
+  }, [totalAvoided, pauses, history, settings, pro, setupComplete]);
+
+  // Keep the OS in step with the friction settings. The re-shield schedule is
+  // owned by DeviceActivity, so turning the switch off has to reach the
+  // extension, not just this store.
+  useEffect(() => {
+    if (!hydrated.current) return;
+    if (pro && settings.reshieldOn) {
+      screenTime.startMonitoring(RESHIELD_AFTER_SECONDS).catch(() => {});
+    } else {
+      screenTime.stopMonitoring().catch(() => {});
+    }
+  }, [pro, settings.reshieldOn]);
 
   const update = useCallback(
     (patch: Partial<Settings>) => setSettings((s) => ({ ...s, ...patch })),
     [],
   );
+
+  const completeSetup = useCallback<Store['completeSetup']>(async () => {
+    setSetupComplete(true);
+    // Failure here means the OS is not yet intercepting, which is worth
+    // knowing but is not worth blocking the hand-off screen over — settings
+    // can retry, and the app is still usable.
+    try {
+      await screenTime.applyShield({ applications: 1, categories: 0, token: 'current' });
+    } catch {
+      // Left unshielded; Settings offers the retry.
+    }
+  }, []);
 
   const logAvoided = useCallback<Store['logAvoided']>(
     (amount, label) => {
@@ -141,11 +207,26 @@ export function ShieldStoreProvider({ children }: { children: ReactNode }) {
       settings,
       pro,
       setPro,
+      setupComplete,
+      hydrated: isHydrated,
+      completeSetup,
       update,
       logAvoided,
       logContinued,
     }),
-    [totalAvoided, pauses, history, settings, pro, update, logAvoided, logContinued],
+    [
+      totalAvoided,
+      pauses,
+      history,
+      settings,
+      pro,
+      setupComplete,
+      isHydrated,
+      completeSetup,
+      update,
+      logAvoided,
+      logContinued,
+    ],
   );
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
