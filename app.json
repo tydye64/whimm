@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "Threshold",
+    "slug": "threshold",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "threshold",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#081e21",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#081e21",
+      "resizeMode": "contain",
+      "image": "./assets/icon.png"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.threshold.app"
+    },
+    "android": {
+      "package": "com.threshold.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#081e21",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": ["expo-router", "expo-font"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
