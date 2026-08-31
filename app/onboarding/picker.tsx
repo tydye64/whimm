@@ -80,7 +80,7 @@ export default function Picker() {
           </Text>
           <Text style={styles.confirmSub}>
             {appPicked
-              ? 'Threshold will step in front of it'
+              ? 'Whimm will step in front of it'
               : 'Tap the picker above to choose'}
           </Text>
         </View>

@@ -1,7 +1,7 @@
 /**
  * The monitored app, standing in.
  *
- * Not a Threshold screen — it represents the shopping app the user continued
+ * Not a Whimm screen — it represents the shopping app the user continued
  * into, so the mid-session re-shield can be demonstrated end to end. On a real
  * device this is Amazon or DoorDash, and the re-shield is fired by a
  * DeviceActivity threshold rather than by a timer in here.
@@ -61,9 +61,9 @@ export default function Session() {
           <Text style={styles.pillText}>
             {reshieldActive
               ? remaining > 0
-                ? `Threshold checks back in ${remaining}s`
+                ? `Whimm checks back in ${remaining}s`
                 : 'checking back now'
-              : 'Threshold is watching this session'}
+              : 'Whimm is watching this session'}
           </Text>
         </View>
       </View>

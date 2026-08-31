@@ -32,7 +32,7 @@ export default function Home() {
         <View style={styles.head}>
           <View style={styles.brand}>
             <View style={styles.mark} />
-            <Text style={styles.wordmark}>Threshold</Text>
+            <Text style={styles.wordmark}>Whimm</Text>
           </View>
           <Pressable accessibilityRole="button" onPress={() => router.push('/settings')} hitSlop={10}>
             <Text style={styles.settings}>Settings</Text>

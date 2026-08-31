@@ -195,7 +195,7 @@ export default function Settings() {
 
         <Text style={styles.emailTitle}>Verify with email</Text>
         <Text style={styles.emailBlurb}>
-          Optional. Connect the inbox your order confirmations land in and Threshold can
+          Optional. Connect the inbox your order confirmations land in and Whimm can
           check your avoided total against what actually shipped. It reads confirmation
           subject lines and nothing else.
         </Text>
@@ -241,7 +241,7 @@ export default function Settings() {
         )}
 
         <Text style={styles.footer}>
-          Threshold 1.0 · your amounts and patterns stay on this phone unless you connect an
+          Whimm 1.0 · your amounts and patterns stay on this phone unless you connect an
           inbox above.
         </Text>
       </ScrollView>

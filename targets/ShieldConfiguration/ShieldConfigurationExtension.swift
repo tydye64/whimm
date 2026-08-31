@@ -16,7 +16,7 @@ import UIKit
 
  So the countdown ring, the reflection question, the running total and
  Instrument Serif all live in the app, and this card's primary button is the
- door to them: tapping it opens `threshold://shield`, and the real screen takes
+ door to them: tapping it opens `whimm://shield`, and the real screen takes
  over from there.
 
  What this card CAN do is carry the tone. It is the first thing the user sees
@@ -65,24 +65,24 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
   }
 
   override func configuration(shielding application: Application) -> ShieldConfiguration {
-    shield(subtitle: "Threshold is holding the door for a few seconds. Nothing is blocked.")
+    shield(subtitle: "Whimm is holding the door for a few seconds. Nothing is blocked.")
   }
 
   override func configuration(
     shielding application: Application,
     in category: ActivityCategory
   ) -> ShieldConfiguration {
-    shield(subtitle: "Threshold is holding the door for a few seconds. Nothing is blocked.")
+    shield(subtitle: "Whimm is holding the door for a few seconds. Nothing is blocked.")
   }
 
   override func configuration(shielding webDomain: WebDomain) -> ShieldConfiguration {
-    shield(subtitle: "Threshold is holding the door for a few seconds. Nothing is blocked.")
+    shield(subtitle: "Whimm is holding the door for a few seconds. Nothing is blocked.")
   }
 
   override func configuration(
     shielding webDomain: WebDomain,
     in category: ActivityCategory
   ) -> ShieldConfiguration {
-    shield(subtitle: "Threshold is holding the door for a few seconds. Nothing is blocked.")
+    shield(subtitle: "Whimm is holding the door for a few seconds. Nothing is blocked.")
   }
 }

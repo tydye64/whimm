@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "Threshold",
-    "slug": "threshold",
+    "name": "Whimm",
+    "slug": "whimm",
     "version": "1.0.0",
     "orientation": "portrait",
-    "scheme": "threshold",
+    "scheme": "whimm",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "backgroundColor": "#081e21",
@@ -16,10 +16,10 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.threshold.app"
+      "bundleIdentifier": "com.whimm.app"
     },
     "android": {
-      "package": "com.threshold.app",
+      "package": "com.whimm.app",
       "adaptiveIcon": {
         "backgroundColor": "#081e21",
         "foregroundImage": "./assets/android-icon-foreground.png",

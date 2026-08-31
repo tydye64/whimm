@@ -4,7 +4,7 @@
  * A harness, not a product screen: it exists so the mechanic can be triggered
  * and reviewed without a provisioned device, and so the loop can be walked in
  * a simulator where FamilyControls cannot present. Tapping SHOP does what
- * opening a monitored app does on a real device; tapping THR opens Threshold.
+ * opening a monitored app does on a real device; tapping THR opens Whimm.
  *
  * On a provisioned build this route is unreachable from the UI — the real
  * trigger is DeviceActivity, and `/home` is the app's own home screen.
@@ -27,7 +27,7 @@ const APPS = [
   { code: 'SHOP', label: 'Shop', monitored: true },
   { code: 'MUS', label: 'Music' },
   { code: 'NOTE', label: 'Notes' },
-  { code: 'THR', label: 'Threshold', app: true },
+  { code: 'THR', label: 'Whimm', app: true },
 ];
 
 export default function Home() {

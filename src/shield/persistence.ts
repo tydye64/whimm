@@ -14,7 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import type { ShieldEvent } from './store';
 
-const KEY = 'threshold.state.v1';
+const KEY = 'whimm.state.v1';
 
 export type Persisted = {
   totalAvoided: number;

@@ -1,5 +1,5 @@
 /**
- * Screen 6 — what Threshold can and cannot see.
+ * Screen 6 — what Whimm can and cannot see.
  *
  * The highest drop-off point in the flow, and the one screen where being
  * *specific* beats being reassuring. The three-pill diagram runs first so the
@@ -45,7 +45,7 @@ export default function Trust() {
     <Screen gutter={gutter.wide}>
       <CaptionHeader onBack={back} caption="Setup 1 of 4" />
 
-      <Text style={styles.title}>Here is exactly what Threshold sees.</Text>
+      <Text style={styles.title}>Here is exactly what Whimm sees.</Text>
 
       <View style={styles.flow}>
         <Pill label="You tap the app" />

@@ -28,7 +28,7 @@ export default function Hero() {
     >
       <View style={styles.brand}>
         <View style={styles.mark} />
-        <Text style={styles.wordmark}>Threshold</Text>
+        <Text style={styles.wordmark}>Whimm</Text>
       </View>
 
       <View style={styles.middle}>

@@ -72,8 +72,8 @@ export default function ShieldPreview() {
         </Text>
         <Text style={styles.resolvedBody}>
           {outcome === 'close'
-            ? 'That’s your first entry. The total is the only scoreboard Threshold keeps.'
-            : 'Some carts are errands. Threshold only asks that you meant it.'}
+            ? 'That’s your first entry. The total is the only scoreboard Whimm keeps.'
+            : 'Some carts are errands. Whimm only asks that you meant it.'}
         </Text>
       </Screen>
     );
@@ -92,7 +92,7 @@ export default function ShieldPreview() {
     >
       <View style={styles.brand}>
         <View style={styles.mark} />
-        <Text style={styles.brandText}>Threshold · practice run</Text>
+        <Text style={styles.brandText}>Whimm · practice run</Text>
       </View>
 
       <View style={styles.middle}>

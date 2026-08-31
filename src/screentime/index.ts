@@ -20,7 +20,7 @@
  *    real screen renders in-app. See
  *    `targets/ShieldConfiguration/ShieldConfigurationExtension.swift`.
  */
-import { ThresholdScreenTime } from '../../modules/threshold-screentime';
+import { WhimmScreenTime } from '../../modules/whimm-screentime';
 
 export type AuthorizationStatus = 'notDetermined' | 'denied' | 'approved';
 
@@ -87,14 +87,14 @@ const simulated: ScreenTime = {
 };
 
 const native: ScreenTime = {
-  isSupported: () => ThresholdScreenTime?.isSupported() ?? false,
-  getAuthorizationStatus: () => ThresholdScreenTime!.getAuthorizationStatus(),
-  requestAuthorization: () => ThresholdScreenTime!.requestAuthorization(),
-  presentPicker: () => ThresholdScreenTime!.presentPicker(),
-  applyShield: () => ThresholdScreenTime!.applyShield(),
-  clearShield: () => ThresholdScreenTime!.clearShield(),
-  startMonitoring: (afterSeconds) => ThresholdScreenTime!.startMonitoring(afterSeconds),
-  stopMonitoring: () => ThresholdScreenTime!.stopMonitoring(),
+  isSupported: () => WhimmScreenTime?.isSupported() ?? false,
+  getAuthorizationStatus: () => WhimmScreenTime!.getAuthorizationStatus(),
+  requestAuthorization: () => WhimmScreenTime!.requestAuthorization(),
+  presentPicker: () => WhimmScreenTime!.presentPicker(),
+  applyShield: () => WhimmScreenTime!.applyShield(),
+  clearShield: () => WhimmScreenTime!.clearShield(),
+  startMonitoring: (afterSeconds) => WhimmScreenTime!.startMonitoring(afterSeconds),
+  stopMonitoring: () => WhimmScreenTime!.stopMonitoring(),
 };
 
 /**
@@ -103,7 +103,7 @@ const native: ScreenTime = {
  * throwing at import.
  */
 export const screenTime: ScreenTime =
-  ThresholdScreenTime?.isSupported() ? native : simulated;
+  WhimmScreenTime?.isSupported() ? native : simulated;
 
 /** True while the app is running against the simulation rather than the OS. */
 export const isSimulated = screenTime === simulated;

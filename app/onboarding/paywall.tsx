@@ -37,7 +37,7 @@ export default function Paywall() {
     <Screen enter="fade" style={styles.screen}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.body}>
         <View style={styles.head}>
-          <Text style={styles.eyebrow}>Threshold Pro</Text>
+          <Text style={styles.eyebrow}>Whimm Pro</Text>
           <Pressable accessibilityRole="button" onPress={done} hitSlop={10}>
             <Text style={styles.dismiss}>Not now</Text>
           </Pressable>

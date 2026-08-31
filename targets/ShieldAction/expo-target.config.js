@@ -2,10 +2,10 @@
 /** @type {import('@bacons/apple-targets').Config} */
 module.exports = {
   type: 'shield-action',
-  name: 'ThresholdShieldAction',
+  name: 'WhimmShieldAction',
   frameworks: ['ManagedSettings', 'FamilyControls'],
   entitlements: {
     'com.apple.developer.family-controls': true,
-    'com.apple.security.application-groups': ['group.com.threshold.app'],
+    'com.apple.security.application-groups': ['group.com.whimm.app'],
   },
 };

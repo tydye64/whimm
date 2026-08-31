@@ -98,7 +98,7 @@ export default function Shield() {
         <View style={styles.brand}>
           <View style={styles.mark} />
           <Text style={styles.brandText}>
-            {isReshield ? 'Threshold · re-shield' : 'Threshold · pause'}
+            {isReshield ? 'Whimm · re-shield' : 'Whimm · pause'}
           </Text>
         </View>
         {/* Names what is being intercepted, so the shield is never ambiguous. */}

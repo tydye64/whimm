@@ -7,7 +7,7 @@ import ManagedSettings
 
  `eventDidReachThreshold` fires once the monitored apps have been used
  continuously for the configured duration. Re-applying the shield is what
- brings Threshold back in front of a session already underway — the Pro step
+ brings Whimm back in front of a session already underway — the Pro step
  the design calls "checks back after 5 minutes of continuous use".
 
  This runs in its own process with a tight memory budget and no access to the
@@ -15,8 +15,8 @@ import ManagedSettings
  app group.
  */
 class DeviceActivityMonitorExtension: DeviceActivityMonitor {
-  private let store = ManagedSettingsStore(named: .threshold)
-  private let defaults = UserDefaults(suiteName: "group.com.threshold.app")
+  private let store = ManagedSettingsStore(named: .whimm)
+  private let defaults = UserDefaults(suiteName: "group.com.whimm.app")
 
   override func eventDidReachThreshold(
     _ event: DeviceActivityEvent.Name,
@@ -28,15 +28,15 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     // Honour the user's own switch. The app writes this whenever the setting
     // changes; an extension that ignored it would re-shield someone who had
     // explicitly turned re-shielding off, which is worse than not shipping it.
-    guard defaults?.bool(forKey: "threshold.reshieldEnabled") ?? true else { return }
+    guard defaults?.bool(forKey: "whimm.reshieldEnabled") ?? true else { return }
 
-    guard let data = defaults?.data(forKey: "threshold.selection"),
+    guard let data = defaults?.data(forKey: "whimm.selection"),
           let selection = try? JSONDecoder().decode(FamilyActivitySelection.self, from: data)
     else { return }
 
     // Marks this interception as a re-shield so the app can open with the
     // "you've been in here a while" framing rather than the launch framing.
-    defaults?.set(true, forKey: "threshold.pendingReshield")
+    defaults?.set(true, forKey: "whimm.pendingReshield")
 
     store.shield.applications =
       selection.applicationTokens.isEmpty ? nil : selection.applicationTokens
@@ -46,14 +46,14 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
 
   override func intervalDidEnd(for activity: DeviceActivityName) {
     super.intervalDidEnd(for: activity)
-    defaults?.set(false, forKey: "threshold.pendingReshield")
+    defaults?.set(false, forKey: "whimm.pendingReshield")
   }
 }
 
 extension ManagedSettingsStore.Name {
-  static let threshold = Self("threshold")
+  static let whimm = Self("whimm")
 }
 
 extension DeviceActivityEvent.Name {
-  static let reshield = Self("threshold.reshield")
+  static let reshield = Self("whimm.reshield")
 }

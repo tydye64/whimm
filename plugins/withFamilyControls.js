@@ -19,7 +19,7 @@ const { withEntitlementsPlist, withInfoPlist } = require('expo/config-plugins');
  * must match `SelectionStore.appGroup` in the native module and the literal in
  * each extension.
  */
-const APP_GROUP = 'group.com.threshold.app';
+const APP_GROUP = 'group.com.whimm.app';
 
 module.exports = function withFamilyControls(config) {
   config = withEntitlementsPlist(config, (cfg) => {
@@ -37,7 +37,7 @@ module.exports = function withFamilyControls(config) {
   config = withInfoPlist(config, (cfg) => {
     // The shield card's primary button routes here; see ShieldActionExtension.
     const schemes = new Set(cfg.modResults.LSApplicationQueriesSchemes ?? []);
-    schemes.add('threshold');
+    schemes.add('whimm');
     cfg.modResults.LSApplicationQueriesSchemes = [...schemes];
     return cfg;
   });

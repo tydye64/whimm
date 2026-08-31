@@ -19,7 +19,7 @@ export type NativeSelection = {
   token: string;
 };
 
-type ThresholdScreenTimeModule = {
+type WhimmScreenTimeModule = {
   isSupported(): boolean;
   getAuthorizationStatus(): Promise<NativeAuthorizationStatus>;
   requestAuthorization(): Promise<NativeAuthorizationStatus>;
@@ -31,5 +31,5 @@ type ThresholdScreenTimeModule = {
   stopMonitoring(): Promise<void>;
 };
 
-export const ThresholdScreenTime =
-  requireOptionalNativeModule<ThresholdScreenTimeModule>('ThresholdScreenTime');
+export const WhimmScreenTime =
+  requireOptionalNativeModule<WhimmScreenTimeModule>('WhimmScreenTime');

@@ -1,5 +1,5 @@
 /**
- * Threshold palette.
+ * Whimm palette.
  *
  * The prototypes are authored in oklch across three hue families — a deep
  * desaturated teal ground (h205), a single ochre accent (h78) and a warm bone

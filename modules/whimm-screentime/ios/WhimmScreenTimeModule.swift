@@ -28,13 +28,13 @@ import SwiftUI
  extensions — which run in separate processes and cannot ask the app anything —
  can read it.
  */
-public class ThresholdScreenTimeModule: Module {
-  private let store = ManagedSettingsStore(named: .threshold)
+public class WhimmScreenTimeModule: Module {
+  private let store = ManagedSettingsStore(named: .whimm)
   private let center = AuthorizationCenter.shared
   private let activityCenter = DeviceActivityCenter()
 
   public func definition() -> ModuleDefinition {
-    Name("ThresholdScreenTime")
+    Name("WhimmScreenTime")
 
     Function("isSupported") { () -> Bool in
       if #available(iOS 16.0, *) { return true }
@@ -148,15 +148,15 @@ enum ShieldError: Error {
 
 extension ManagedSettingsStore.Name {
   /// Shared with the shield extensions through the app group.
-  static let threshold = Self("threshold")
+  static let whimm = Self("whimm")
 }
 
 extension DeviceActivityName {
-  static let session = Self("threshold.session")
+  static let session = Self("whimm.session")
 }
 
 extension DeviceActivityEvent.Name {
-  static let reshield = Self("threshold.reshield")
+  static let reshield = Self("whimm.reshield")
 }
 
 // MARK: - Selection persistence
@@ -168,8 +168,8 @@ extension DeviceActivityEvent.Name {
  round trip — encoding them does not reveal which apps they refer to.
  */
 enum SelectionStore {
-  static let appGroup = "group.com.threshold.app"
-  static let key = "threshold.selection"
+  static let appGroup = "group.com.whimm.app"
+  static let key = "whimm.selection"
   static let handle = "device-selection"
 
   private static var defaults: UserDefaults? {

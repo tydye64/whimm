@@ -3,7 +3,7 @@
  *
  * The only inversion in the app: ochre floods the display and deep teal type
  * sits on top of it. A 132px number, a rotated mono rail down the outer edge,
- * and a staggered entrance. Everything else in Threshold is restrained so that
+ * and a staggered entrance. Everything else in Whimm is restrained so that
  * this screen has something to spend.
  *
  * It fires only on a genuine threshold crossing, never on every save. That

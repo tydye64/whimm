@@ -1,4 +1,4 @@
-# Threshold — implementation notes
+# Whimm — implementation notes
 
 The Expo app in this repo implements the designs handed off in `project/`
 (see `README.md` for the bundle, and `chats/chat1.md` for the intent behind
@@ -35,8 +35,8 @@ npx expo run:ios --device
 Before that will install, three things have to happen outside this repo:
 
 1. Set `appleTeamId` in `app.json` (currently `REPLACE_WITH_TEAM_ID`).
-2. Enable the **Family Controls** capability on the `com.threshold.app`
-   identifier, and create the `group.com.threshold.app` App Group.
+2. Enable the **Family Controls** capability on the `com.whimm.app`
+   identifier, and create the `group.com.whimm.app` App Group.
 3. Request the **Family Controls (Distribution)** entitlement from Apple for
    that bundle ID. It is a restricted entitlement and is not granted
    automatically; distribution builds will not upload without it.
@@ -56,7 +56,7 @@ extension. Expect to fix compile errors on first build.
 
 ## The one design constraint worth knowing up front
 
-**The shield you see in `Threshold Shield.dc.html` cannot be rendered by iOS's
+**The shield you see in `Whimm Shield.dc.html` cannot be rendered by iOS's
 real shield.**
 
 When a monitored app is opened, iOS draws the blocking UI itself, from a
@@ -72,7 +72,7 @@ extension runs out-of-process with a fixed layout.
 So the mechanic is split:
 
 - the **ShieldConfiguration** shows a minimal, Apple-styled card whose primary
-  button deep-links into Threshold;
+  button deep-links into Whimm;
 - the **designed shield renders in-app**, where the countdown, the reflection
   question and the two exits all work as drawn.
 
@@ -104,7 +104,7 @@ src/
   screentime/            the Screen Time seam (see below)
   shield/                store, persistence, shared constants
 modules/
-  threshold-screentime/  the native module (Swift + JS surface)
+  whimm-screentime/  the native module (Swift + JS surface)
 targets/
   ShieldConfiguration/   the card iOS draws over a monitored app
   ShieldAction/          what its two buttons do
@@ -185,7 +185,7 @@ first.
 ## Open questions for design
 
 1. The Apple-drawn shield card (above) needs sign-off. I wrote placeholder copy
-   — "One moment first." / "Threshold is holding the door for a few seconds.
+   — "One moment first." / "Whimm is holding the door for a few seconds.
    Nothing is blocked." / "Take the pause" / "Not now, put it back" — and it
    needs a `ShieldMark` icon asset, which does not exist yet. This is the first
    thing a user sees at the moment of impulse, so it deserves more attention
