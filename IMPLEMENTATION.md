@@ -32,18 +32,45 @@ npx expo prebuild --platform ios      # generates ios/, including the 3 extensio
 npx expo run:ios --device
 ```
 
-Before that will install, three things have to happen outside this repo:
+Before that will install, a few things have to happen outside this repo:
 
-1. Set `appleTeamId` in `app.json` (currently `REPLACE_WITH_TEAM_ID`).
-2. Enable the **Family Controls** capability on the `com.whimm.app`
+1. ~~Set `appleTeamId` in `app.json`~~ — **done** (`C8T2SMUUDF`).
+2. ~~Run `eas init`~~ — **done**. `extra.eas.projectId` and `updates.url`
+   are set; the EAS project is `tyyobs/whimm`
+   (https://expo.dev/accounts/tyyobs/projects/whimm).
+3. Enable the **Family Controls** capability on the `com.whimm.app`
    identifier, and create the `group.com.whimm.app` App Group.
-3. Request the **Family Controls (Distribution)** entitlement from Apple for
+4. Request the **Family Controls (Distribution)** entitlement from Apple for
    that bundle ID. It is a restricted entitlement and is not granted
-   automatically; distribution builds will not upload without it.
+   automatically; **distribution/TestFlight builds will not upload without
+   it.** Development and internal builds should work once the capability is
+   merely enabled on the identifier (step 3) — confirm this before assuming
+   step 4 blocks everything.
+5. Create the app record in **App Store Connect** and note its numeric
+   `ascAppId` — goes into `eas.json`'s `submit.production.ios.ascAppId`,
+   not yet set (no ASC app exists yet).
 
-Without all three, the app still runs — `src/screentime` falls back to the
+Without all of these, the app still runs — `src/screentime` falls back to the
 simulation and the whole flow stays walkable. `/harness` is the fake springboard
 that lets you trigger the shield by hand in that mode.
+
+### EAS builds
+
+```bash
+npx eas-cli build --profile development --platform ios   # first: prove the Swift compiles
+npx eas-cli build --profile preview --platform ios        # internal distribution
+npx eas-cli build --profile production --platform ios     # store, once ASC + entitlement are set
+```
+
+`eas.json`'s `cli.appVersionSource: "remote"` means EAS owns the build number —
+`app.json` never needs a manual bump. `production.autoIncrement: true` bumps it
+automatically on every production build.
+
+**Note for whoever runs these:** this repo has been developed in a sandboxed
+environment whose network policy blocks `api.expo.dev` outright — `eas login`,
+`eas init`, and `eas build` all have to be run from a normal machine (any OS,
+no Xcode needed for the CLI itself). Android is out of scope entirely — the
+mechanic is FamilyControls/DeviceActivity, which has no Android equivalent.
 
 ### What is unverified
 

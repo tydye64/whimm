@@ -86,6 +86,9 @@
         "projectId": "78762f6f-5057-4764-8929-9b467f583964"
       }
     },
-    "owner": "tyyobs"
+    "owner": "tyyobs",
+    "updates": {
+      "url": "https://u.expo.dev/78762f6f-5057-4764-8929-9b467f583964"
+    }
   }
 }
