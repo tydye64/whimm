@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>body { margin:0; background:#0a1214; }</style>
+</helmet>
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:56px 24px;box-sizing:border-box;background:radial-gradient(120% 80% at 50% 0%, #12242a 0%, #0a1214 70%)">
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+  <div style="height:100%;position:relative;overflow:hidden;background:oklch(0.235 0.03 205);font-family:Geist,system-ui,sans-serif;color:oklch(0.96 0.012 85)">
+    <div style="position:absolute;inset:0;padding:0 28px 44px;box-sizing:border-box;display:flex;flex-direction:column">
+      <div style="position:absolute;top:-160px;left:50%;transform:translateX(-50%);width:520px;height:400px;border-radius:50%;background:radial-gradient(closest-side, oklch(0.78 0.11 78 / 0.18), transparent 70%);pointer-events:none"></div>
+      <div style="padding-top:74px;position:relative;display:flex;align-items:center;gap:9px">
+        <div style="width:9px;height:9px;border-radius:3px;background:oklch(0.82 0.11 78)"></div>
+        <span style="font:500 11px 'Geist Mono',monospace;letter-spacing:0.14em;color:oklch(0.7 0.02 205);text-transform:uppercase">Whimm</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;position:relative">
+        <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:40px;line-height:1.06;text-wrap:pretty">Hold on. What are you here for?</h2>
+        <p style="margin:16px 0 0;font:300 15.5px/1.5 Geist,system-ui;color:oklch(0.76 0.018 205);max-width:290px">Ten seconds, then Shop opens if you still want it.</p>
+      </div>
+      <div style="position:relative;display:flex;flex-direction:column;gap:11px">
+        <button type="button" style="appearance:none;border:0;width:100%;padding:19px;border-radius:18px;background:oklch(0.82 0.11 78);color:oklch(0.2 0.03 205);font:500 17px Geist,system-ui;cursor:pointer">Close app</button>
+        <button type="button" style="appearance:none;width:100%;padding:17px;border-radius:18px;border:1px solid oklch(0.44 0.02 205);background:transparent;color:oklch(0.96 0.012 85);font:400 15.5px Geist,system-ui;cursor:pointer">Continue</button>
+      </div>
+    </div>
+  </div>
+</x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:520,&quot;height&quot;:1000}}"></script>
+</body>
+</html>
