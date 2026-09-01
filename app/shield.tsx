@@ -4,19 +4,31 @@
  * This is the mechanic. Four things are load-bearing and should survive any
  * redesign of this screen:
  *
- * 1. **The exits are visually equal.** Same size, same weight, side by side.
+ * 1. **The exits are visually equal in size and weight**, side by side.
  *    Continue is not hidden, shrunk, greyed permanently, or moved. The app is a
- *    pause, not a lock, and a trapped user is a uninstalled app.
+ *    pause, not a lock, and a trapped user is a uninstalled app. (Their fills
+ *    now differ — Close is the ochre-primary action, Continue an outline — but
+ *    that is a color statement, not a size or prominence one; neither shrinks
+ *    or hides relative to the other.)
  * 2. **Only time separates them.** Close works immediately; Continue reads
  *    "Continue in 7s" and is inert until the ring fills, then becomes identical
- *    to Close. That asymmetry is the entire friction budget — softer than a
- *    hard block, because sometimes an errand really is urgent.
+ *    in weight to Close. That asymmetry is the entire friction budget — softer
+ *    than a hard block, because sometimes an errand really is urgent.
  * 3. **The reflection answer stays visible.** Once committed it collapses into
  *    a small "You came for —" note that remains on screen through the decision.
  *    That persistence is what makes answering worth the effort; an input that
  *    vanishes is a survey, not a prompt.
  * 4. **The footer never accuses.** The running total and pause count sit in
  *    quiet mono. Present, never a scoreboard being waved at anyone.
+ *
+ * Visual pass from `Whimm Shield Screen.dc.html`: the header drops the
+ * app-being-shielded pill in favor of a bare wordmark, and Close becomes the
+ * filled ochre action with Continue as its outline counterpart — a reversal
+ * of the old restrained-dark-buttons treatment, now that Close (not Continue)
+ * is the one this screen wants to make easy. That file is a single static
+ * frame with no ring, no reflection card, and no footer; per direction, all
+ * three stay — there was no ring layout to carry over, so the ring keeps its
+ * existing side-by-side position and type scale.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -114,22 +126,13 @@ export default function Shield() {
       top={topOffset.brand}
       bottom={bottomOffset.tight}
       background={color.groundShield}
-      backdrop={<Glow width={540} height={420} top={-170} opacity={0.2} breathe period={8000} />}
+      backdrop={<Glow width={520} height={400} top={-160} opacity={0.18} breathe period={8000} />}
     >
+      {/* Just the wordmark now — the new design drops the app-being-shielded
+          pill from the header entirely. */}
       <View style={styles.head}>
-        <View style={styles.brand}>
-          <View style={styles.mark} />
-          <Text style={styles.brandText}>
-            {isReshield ? 'Whimm · re-shield' : 'Whimm · pause'}
-          </Text>
-        </View>
-        {/* Names what is being intercepted, so the shield is never ambiguous. */}
-        <View style={styles.appPill}>
-          <View style={styles.appTile}>
-            <Text style={styles.appTileText}>SH</Text>
-          </View>
-          <Text style={styles.appName}>Shop</Text>
-        </View>
+        <View style={styles.mark} />
+        <Text style={styles.brandText}>Whimm</Text>
       </View>
 
       <View style={styles.middle}>
@@ -143,14 +146,14 @@ export default function Shield() {
                   : "You've been in here a while."
                 : done
                   ? 'Your call.'
-                  : `${length} seconds, then it's yours.`}
+                  : 'Hold on. What are you here for?'}
             </Text>
             <Text style={styles.headlineSub}>
               {isReshield
                 ? 'Pro re-shield, set for 5 minutes of continuous use.'
                 : done
                   ? 'Both doors are open. Pick the one you meant.'
-                  : 'Shop opens the moment the ring fills, if you still want it.'}
+                  : `${length} seconds, then Shop opens if you still want it.`}
             </Text>
           </View>
         </View>
@@ -217,18 +220,23 @@ export default function Shield() {
 
       <View>
         <View style={styles.exits}>
+          {/* Close is now the filled ochre action — the design's inversion of
+              the old restrained-dark treatment, since this is the exit the
+              screen wants to make easy. */}
           <Pressable
             accessibilityRole="button"
             onPress={close}
             style={({ pressed }) => [
               styles.exit,
               styles.closeExit,
-              pressed && { backgroundColor: color.surfaceIconAlt },
+              pressed && { opacity: 0.92, transform: [{ translateY: 1 }] },
             ]}
           >
-            <Text style={styles.exitLabel}>Close app</Text>
+            <Text style={styles.closeLabel}>Close app</Text>
           </Pressable>
 
+          {/* Continue is an outline throughout — dim and inert before the ring
+              fills, then matches the new design's border/text exactly. */}
           <Pressable
             accessibilityRole="button"
             accessibilityState={{ disabled: !done }}
@@ -236,16 +244,14 @@ export default function Shield() {
             disabled={!done}
             style={[
               styles.exit,
-              {
-                backgroundColor: done ? color.surfaceContinueOn : color.surfaceContinueOff,
-                borderColor: done ? color.borderButton : color.border,
-              },
+              styles.continueExit,
+              { borderColor: done ? color.borderButton : color.border },
             ]}
           >
             <Text
               style={[
                 styles.exitLabel,
-                { color: done ? color.text : color.muted55 },
+                { color: done ? color.text : color.muted52 },
               ]}
             >
               {!done
@@ -271,35 +277,9 @@ export default function Shield() {
 }
 
 const styles = StyleSheet.create({
-  head: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 12,
-  },
-  brand: { flexDirection: 'row', alignItems: 'center', gap: 9 },
+  head: { flexDirection: 'row', alignItems: 'center', gap: 9 },
   mark: { width: 9, height: 9, borderRadius: 3, backgroundColor: color.accentBright },
-  brandText: { ...type.label, color: color.muted72 },
-  appPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingVertical: 6,
-    paddingLeft: 7,
-    paddingRight: 10,
-    borderRadius: radius.chip,
-    backgroundColor: color.surfacePill,
-  },
-  appTile: {
-    width: 18,
-    height: 18,
-    borderRadius: 5,
-    backgroundColor: color.borderPill,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  appTileText: { fontFamily: type.monoValue.fontFamily, fontSize: 7.5, color: color.muted86 },
-  appName: { fontFamily: type.ui.fontFamily, fontSize: 12, color: color.muted84 },
+  brandText: { ...type.label, color: color.muted70 },
 
   middle: { flex: 1, justifyContent: 'center', gap: 26 },
   ringRow: { flexDirection: 'row', alignItems: 'center', gap: 20 },
@@ -395,7 +375,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  closeExit: { borderColor: color.borderButton, backgroundColor: color.surfaceHover },
+  closeExit: { borderColor: color.accentBright, backgroundColor: color.accentBright },
+  closeLabel: { fontFamily: type.button.fontFamily, fontSize: 16, color: color.groundDeep },
+  continueExit: { backgroundColor: 'transparent' },
   exitLabel: { fontFamily: type.button.fontFamily, fontSize: 16, color: color.text },
 
   footer: {
