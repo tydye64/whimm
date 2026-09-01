@@ -41,6 +41,51 @@
     },
     "runtimeVersion": {
       "policy": "appVersion"
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "build": {
+          "experimental": {
+            "ios": {
+              "appExtensions": [
+                {
+                  "bundleIdentifier": "com.whimm.app.shield-config",
+                  "targetName": "WhimmShieldConfiguration",
+                  "entitlements": {
+                    "com.apple.developer.family-controls": true,
+                    "com.apple.security.application-groups": [
+                      "group.com.whimm.app"
+                    ]
+                  }
+                },
+                {
+                  "bundleIdentifier": "com.whimm.app.shield-action",
+                  "targetName": "WhimmShieldAction",
+                  "entitlements": {
+                    "com.apple.developer.family-controls": true,
+                    "com.apple.security.application-groups": [
+                      "group.com.whimm.app"
+                    ]
+                  }
+                },
+                {
+                  "bundleIdentifier": "com.whimm.app.device-activity-monitor",
+                  "targetName": "WhimmDeviceActivityMonitor",
+                  "entitlements": {
+                    "com.apple.developer.family-controls": true,
+                    "com.apple.security.application-groups": [
+                      "group.com.whimm.app"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "projectId": "78762f6f-5057-4764-8929-9b467f583964"
+      }
+    },
+    "owner": "tyyobs"
   }
 }
