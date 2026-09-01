@@ -27,7 +27,7 @@ export default function Milestone() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const pad = resolve(insets);
-  const { pauses } = useStore();
+  const { pauses, daysSinceLastAttempt } = useStore();
   const { amount } = useLocalSearchParams<{ amount?: string }>();
 
   const value = Number(amount ?? 250);
@@ -98,7 +98,13 @@ export default function Milestone() {
               {[
                 { value: String(pauses), key: 'pauses' },
                 { value: '68%', key: 'closed' },
-                { value: '9 days', key: 'streak' },
+                {
+                  value:
+                    daysSinceLastAttempt === null
+                      ? '—'
+                      : `${daysSinceLastAttempt} ${daysSinceLastAttempt === 1 ? 'day' : 'days'}`,
+                  key: 'since last try',
+                },
               ].map((stat) => (
                 <View key={stat.key}>
                   <Text style={styles.statValue}>{stat.value}</Text>

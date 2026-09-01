@@ -28,6 +28,8 @@ import { load, save } from './persistence';
 /** Thresholds that earn the milestone screen. */
 export const MILESTONES = [50, 100, 200, 250, 500, 1000];
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+
 export type ExtraStep = 'none' | 'breathe' | 'type';
 
 export type MonitoredApp = { code: string; label: string };
@@ -66,7 +68,13 @@ type Settings = {
 type Store = {
   totalAvoided: number;
   pauses: number;
-  streak: number;
+  /**
+   * Whole days since the last time a monitored app was opened — null when it
+   * has never happened. Counts from the *attempt*, not the outcome, so closing
+   * the shield resets it just as continuing through does. It measures how long
+   * the urge has stayed away rather than how well the user resisted it.
+   */
+  daysSinceLastAttempt: number | null;
   history: ShieldEvent[];
   settings: Settings;
   pro: boolean;
@@ -85,6 +93,8 @@ type Store = {
   logAvoided: (amount: number, label?: string) => number | null;
   /** Records a shield the user continued through. Never framed as a failure. */
   logContinued: () => void;
+  /** Called when a shield opens, whatever the user then chooses. */
+  recordAttempt: () => void;
 };
 
 const StoreContext = createContext<Store | null>(null);
@@ -94,6 +104,11 @@ export function ShieldStoreProvider({ children }: { children: ReactNode }) {
   const [pauses, setPauses] = useState(12);
   const [history, setHistory] = useState<ShieldEvent[]>(SEED_HISTORY);
   const [pro, setPro] = useState(true);
+  // Seeded three days back so the return screens have a plausible figure
+  // before any real attempt has been recorded.
+  const [lastAttemptAt, setLastAttemptAt] = useState<number | null>(
+    Date.now() - 3 * DAY_MS,
+  );
   const [setupComplete, setSetupComplete] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
   const [settings, setSettings] = useState<Settings>({
@@ -117,6 +132,7 @@ export function ShieldStoreProvider({ children }: { children: ReactNode }) {
         if (saved.history) setHistory(saved.history);
         if (saved.pro !== undefined) setPro(saved.pro);
         if (saved.setupComplete !== undefined) setSetupComplete(saved.setupComplete);
+        if (saved.lastAttemptAt !== undefined) setLastAttemptAt(saved.lastAttemptAt);
         if (saved.settings) setSettings((s) => ({ ...s, ...saved.settings } as Settings));
       }
       hydrated.current = true;
@@ -131,8 +147,8 @@ export function ShieldStoreProvider({ children }: { children: ReactNode }) {
   // with the seed values.
   useEffect(() => {
     if (!hydrated.current) return;
-    save({ totalAvoided, pauses, history, settings, pro, setupComplete });
-  }, [totalAvoided, pauses, history, settings, pro, setupComplete]);
+    save({ totalAvoided, pauses, history, settings, pro, setupComplete, lastAttemptAt });
+  }, [totalAvoided, pauses, history, settings, pro, setupComplete, lastAttemptAt]);
 
   // Keep the OS in step with the friction settings. The re-shield schedule is
   // owned by DeviceActivity, so turning the switch off has to reach the
@@ -162,6 +178,8 @@ export function ShieldStoreProvider({ children }: { children: ReactNode }) {
       // Left unshielded; Settings offers the retry.
     }
   }, []);
+
+  const recordAttempt = useCallback(() => setLastAttemptAt(Date.now()), []);
 
   const logAvoided = useCallback<Store['logAvoided']>(
     (amount, label) => {
@@ -202,7 +220,10 @@ export function ShieldStoreProvider({ children }: { children: ReactNode }) {
     () => ({
       totalAvoided,
       pauses,
-      streak: 9,
+      daysSinceLastAttempt:
+        lastAttemptAt === null
+          ? null
+          : Math.max(0, Math.floor((Date.now() - lastAttemptAt) / DAY_MS)),
       history,
       settings,
       pro,
@@ -213,6 +234,7 @@ export function ShieldStoreProvider({ children }: { children: ReactNode }) {
       update,
       logAvoided,
       logContinued,
+      recordAttempt,
     }),
     [
       totalAvoided,
@@ -222,10 +244,12 @@ export function ShieldStoreProvider({ children }: { children: ReactNode }) {
       pro,
       setupComplete,
       isHydrated,
+      lastAttemptAt,
       completeSetup,
       update,
       logAvoided,
       logContinued,
+      recordAttempt,
     ],
   );
 

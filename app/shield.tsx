@@ -30,6 +30,7 @@ import {
 } from 'react-native';
 
 import { CountdownRing } from '../src/components/CountdownRing';
+import { BreatheStep, TypeToConfirmStep } from '../src/components/ExtraStep';
 import { Glow } from '../src/components/Glow';
 import { Screen } from '../src/components/Screen';
 import { useCountdown } from '../src/hooks/useCountdown';
@@ -40,7 +41,8 @@ import { text as type } from '../src/theme/type';
 
 export default function Shield() {
   const router = useRouter();
-  const { settings, totalAvoided, pauses, logContinued } = useStore();
+  const { settings, totalAvoided, pauses, pro, logContinued, recordAttempt } =
+    useStore();
   // `re` is the mid-session re-shield, which reads differently: it is checking
   // back on a session already underway rather than intercepting a launch.
   const { mode } = useLocalSearchParams<{ mode?: 'first' | 're' }>();
@@ -48,6 +50,18 @@ export default function Shield() {
 
   const length = settings.pauseSeconds;
   const { remaining, done } = useCountdown(length);
+
+  // The attempt is what resets "days since last try", so it is recorded on
+  // arrival rather than on either exit — both outcomes are still an attempt.
+  useEffect(() => {
+    recordAttempt();
+  }, [recordAttempt]);
+
+  // The Pro extra step, if any, sits between the pause ending and Continue
+  // working. `none` leaves the original behaviour untouched.
+  const extraStep = pro && settings.extraStep !== 'none' ? settings.extraStep : 'none';
+  const [extraStarted, setExtraStarted] = useState(false);
+  const [extraSatisfied, setExtraSatisfied] = useState(false);
 
   const [asking, setAsking] = useState(settings.reflection && !isReshield);
   const [intent, setIntent] = useState('');
@@ -77,13 +91,21 @@ export default function Shield() {
     });
   const proceed = () => {
     if (!done) return;
+    // First tap after the ring fills starts the extra step rather than opening
+    // the app; the second (once satisfied) goes through.
+    if (extraStep !== 'none' && !extraSatisfied) {
+      setExtraStarted(true);
+      return;
+    }
     logContinued();
     router.replace('/session');
   };
 
   const progress = (length - remaining) / length;
-  const showQuestion = asking && !committed;
-  const showEcho = committed && intent.trim().length > 0;
+  const showExtra = extraStarted;
+  // The extra step takes over the middle of the screen while it runs.
+  const showQuestion = asking && !committed && !showExtra;
+  const showEcho = committed && intent.trim().length > 0 && !showExtra;
 
   return (
     <Screen
@@ -178,6 +200,19 @@ export default function Shield() {
             <Text style={styles.echoText}>{intent}</Text>
           </View>
         ) : null}
+
+        {showExtra && extraStep === 'breathe' ? (
+          <BreatheStep
+            satisfied={extraSatisfied}
+            onSatisfied={() => setExtraSatisfied(true)}
+          />
+        ) : null}
+        {showExtra && extraStep === 'type' ? (
+          <TypeToConfirmStep
+            satisfied={extraSatisfied}
+            onSatisfied={() => setExtraSatisfied(true)}
+          />
+        ) : null}
       </View>
 
       <View>
@@ -213,7 +248,15 @@ export default function Shield() {
                 { color: done ? color.text : color.muted55 },
               ]}
             >
-              {done ? (isReshield ? 'Keep going' : 'Continue') : `Continue in ${remaining}s`}
+              {!done
+                ? `Continue in ${remaining}s`
+                : extraStep !== 'none' && !extraSatisfied
+                  ? extraStep === 'breathe'
+                    ? 'Take a breath'
+                    : 'Type to continue'
+                  : isReshield
+                    ? 'Keep going'
+                    : 'Continue'}
             </Text>
           </Pressable>
         </View>

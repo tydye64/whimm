@@ -30,6 +30,8 @@ export type Persisted = {
   pro: boolean;
   /** Set once setup completes, so returning users skip onboarding. */
   setupComplete: boolean;
+  /** Epoch ms of the last monitored-app open, or null if there has been none. */
+  lastAttemptAt: number | null;
 };
 
 export async function load(): Promise<Partial<Persisted> | null> {

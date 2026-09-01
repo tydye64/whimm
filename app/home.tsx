@@ -24,7 +24,7 @@ import { text as type } from '../src/theme/type';
 
 export default function Home() {
   const router = useRouter();
-  const { totalAvoided, pauses, streak, history } = useStore();
+  const { totalAvoided, pauses, daysSinceLastAttempt, history } = useStore();
 
   return (
     <Screen style={styles.screen}>
@@ -54,8 +54,10 @@ export default function Home() {
           </View>
           <View style={styles.statDivider} />
           <View style={[styles.stat, styles.statRight]}>
-            <Text style={styles.statValue}>{streak}</Text>
-            <Text style={styles.statKey}>Day streak</Text>
+            <Text style={styles.statValue}>
+              {daysSinceLastAttempt === null ? '—' : daysSinceLastAttempt}
+            </Text>
+            <Text style={styles.statKey}>Days since last try</Text>
           </View>
         </View>
 
