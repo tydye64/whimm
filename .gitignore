@@ -30,11 +30,22 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# local env files
-.env*.local
+# local env files — bare `.env` does NOT match `.env*.local` below it, so it
+# needs its own rule; without this a real .env would get committed.
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
 
 # typescript
 *.tsbuildinfo
+
+# credentials — long-lived, never meant to be committed
+credentials.json
+*-service-account.json
+google-service-account*.json
+play-service-account.json
 
 # generated native folders
 /ios
