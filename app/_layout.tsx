@@ -6,6 +6,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ShieldStoreProvider } from '../src/shield/store';
+import { useEntitlement } from '../src/purchases/useEntitlement';
 
 import { color } from '../src/theme/colors';
 import {
@@ -22,6 +23,14 @@ import {
 SplashScreen.preventAutoHideAsync().catch(() => {
   /* already hidden — not worth failing boot over */
 });
+
+// Configures RevenueCat and keeps `pro` in step with the store. Split out
+// because it needs useStore(), and RootLayout renders ShieldStoreProvider
+// rather than sitting inside it.
+function EntitlementSync() {
+  useEntitlement();
+  return null;
+}
 
 export default function RootLayout() {
   const [ready, error] = useFonts({
@@ -45,6 +54,7 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ShieldStoreProvider>
+        <EntitlementSync />
         {/* The app is dark end to end, so the status bar is light everywhere
             except the milestone screen, which flips it in place. */}
         <StatusBar style="light" />

@@ -69,9 +69,15 @@ export default function Shield() {
     recordAttempt();
   }, [recordAttempt]);
 
+  // Snapshot at mount: an entitlement change (e.g. a lapsed renewal caught
+  // mid-pause) must not pull the extra step out from under a shield already
+  // on screen.
+  const proAtMount = useRef(pro).current;
+
   // The Pro extra step, if any, sits between the pause ending and Continue
   // working. `none` leaves the original behaviour untouched.
-  const extraStep = pro && settings.extraStep !== 'none' ? settings.extraStep : 'none';
+  const extraStep =
+    proAtMount && settings.extraStep !== 'none' ? settings.extraStep : 'none';
   const [extraStarted, setExtraStarted] = useState(false);
   const [extraSatisfied, setExtraSatisfied] = useState(false);
 

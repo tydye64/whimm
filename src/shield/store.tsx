@@ -103,7 +103,9 @@ export function ShieldStoreProvider({ children }: { children: ReactNode }) {
   const [totalAvoided, setTotal] = useState(168);
   const [pauses, setPauses] = useState(12);
   const [history, setHistory] = useState<ShieldEvent[]>(SEED_HISTORY);
-  const [pro, setPro] = useState(true);
+  // Optimistic only until useEntitlement's RevenueCat check resolves and, on
+  // repeat launches, until persistence rehydrates below.
+  const [pro, setPro] = useState(false);
   // Seeded three days back so the return screens have a plausible figure
   // before any real attempt has been recorded.
   const [lastAttemptAt, setLastAttemptAt] = useState<number | null>(
