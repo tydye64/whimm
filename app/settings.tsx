@@ -16,11 +16,13 @@
  */
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Linking, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { CaptionHeader } from '../src/components/Nav';
 import { ProTag } from '../src/components/Options';
 import { Screen } from '../src/components/Screen';
+import { TERMS_URL, PRIVACY_URL } from '../src/legal';
+import { isPro, restore } from '../src/purchases';
 import { PAUSE_RANGE } from '../src/shield/model';
 import { ExtraStep, useStore } from '../src/shield/store';
 import { color, optionState } from '../src/theme/colors';
@@ -44,10 +46,26 @@ export default function Settings() {
   const { pro, settings, update } = useStore();
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
+  const [restoring, setRestoring] = useState(false);
+  const [restoreNote, setRestoreNote] = useState<string | null>(null);
 
   const apps = settings.monitoredApps;
   const atFreeLimit = !pro && apps.length >= 1;
   const validEmail = email.includes('@');
+
+  const restorePurchases = async () => {
+    setRestoring(true);
+    setRestoreNote(null);
+    const result = await restore();
+    setRestoring(false);
+    setRestoreNote(
+      result.ok
+        ? isPro(result.data)
+          ? 'Restored'
+          : 'No purchases found on this Apple ID'
+        : 'Could not restore — try again',
+    );
+  };
 
   const addApp = () => {
     if (atFreeLimit) return;
@@ -191,6 +209,40 @@ export default function Settings() {
               <View style={styles.knob} />
             </Pressable>
           </View>
+        </View>
+
+        <View style={styles.sectionHead}>
+          <Text style={styles.sectionTitle}>Subscription</Text>
+          <Text style={styles.sectionNote}>{pro ? 'Pro' : 'Free'}</Text>
+        </View>
+        <View style={styles.card}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityState={{ disabled: restoring }}
+            onPress={restorePurchases}
+            style={styles.cardRow}
+          >
+            <View style={styles.cardText}>
+              <Text style={styles.cardTitle}>
+                {restoring ? 'Restoring…' : 'Restore purchases'}
+              </Text>
+              {restoreNote ? <Text style={styles.cardSub}>{restoreNote}</Text> : null}
+            </View>
+          </Pressable>
+          <Pressable
+            accessibilityRole="link"
+            onPress={() => Linking.openURL(TERMS_URL)}
+            style={styles.cardRow}
+          >
+            <Text style={styles.cardTitle}>Terms of Use</Text>
+          </Pressable>
+          <Pressable
+            accessibilityRole="link"
+            onPress={() => Linking.openURL(PRIVACY_URL)}
+            style={[styles.cardRow, styles.cardRowLast]}
+          >
+            <Text style={styles.cardTitle}>Privacy Policy</Text>
+          </Pressable>
         </View>
 
         <Text style={styles.emailTitle}>Verify with email</Text>

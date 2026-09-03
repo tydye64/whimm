@@ -7,11 +7,16 @@
  * back gesture. An app about not being pressured into spending cannot pressure
  * people into spending.
  */
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import type { PurchasesOffering, PurchasesPackage } from 'react-native-purchases';
 
 import { Button } from '../../src/components/Button';
 import { Screen } from '../../src/components/Screen';
+import { TERMS_URL, PRIVACY_URL } from '../../src/legal';
 import { useFlow } from '../../src/onboarding/state';
+import { getOffering, isPro, purchase, restore } from '../../src/purchases';
+import { PlanId } from '../../src/purchases/entitlement';
 import { color, optionState } from '../../src/theme/colors';
 import { radius } from '../../src/theme/layout';
 import { text as type } from '../../src/theme/type';
@@ -24,14 +29,90 @@ const COMPARISON = [
   { feature: 'Mid-session re-shield', free: '—', pro: 'Yes' },
 ];
 
-const PLANS = [
+type PlanDisplay = { id: PlanId; tag: string; price: string; note: string };
+
+// Rendered wherever the real offering hasn't loaded — no RevenueCat project yet,
+// or web/simulator where there's no store to ask. Keeps the screen walkable
+// everywhere it always has been.
+const FALLBACK_PLANS: PlanDisplay[] = [
   { id: 'monthly', tag: 'Monthly', price: '$3.99', note: 'billed each month' },
   { id: 'annual', tag: 'Yearly', price: '$29.99', note: '$2.50 a month' },
-] as const;
+];
+
+function planDisplay(
+  id: PlanId,
+  tag: string,
+  pkg: PurchasesPackage | null | undefined,
+  fallback: PlanDisplay,
+): PlanDisplay {
+  if (!pkg) return fallback;
+  // pricePerMonthString is the localized annual price divided down to a
+  // monthly figure — the same thing the hardcoded "$2.50 a month" was
+  // approximating, but correct in every storefront rather than just the US.
+  const note =
+    id === 'annual' && pkg.product.pricePerMonthString
+      ? `${pkg.product.pricePerMonthString} a month`
+      : fallback.note;
+  return { id, tag, price: pkg.product.priceString, note };
+}
 
 export default function Paywall() {
   const { plan, setPlan, next } = useFlow();
+  const [offering, setOffering] = useState<PurchasesOffering | null>(null);
+  const [purchasing, setPurchasing] = useState(false);
+  const [restoring, setRestoring] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    getOffering().then((result) => {
+      if (!cancelled && result.ok) setOffering(result.data);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const plans: PlanDisplay[] = [
+    planDisplay('monthly', 'Monthly', offering?.monthly, FALLBACK_PLANS[0]),
+    planDisplay('annual', 'Yearly', offering?.annual, FALLBACK_PLANS[1]),
+  ];
+  const selectedPlan = plans.find((p) => p.id === plan)!;
+
   const done = () => next('paywall');
+
+  const start = async () => {
+    const pkg = plan === 'monthly' ? offering?.monthly : offering?.annual;
+    // No real package to buy (web, simulator, or not yet configured) — same
+    // no-op-and-continue behaviour the mock always had.
+    if (!pkg) {
+      done();
+      return;
+    }
+    setError(null);
+    setPurchasing(true);
+    const result = await purchase(pkg);
+    setPurchasing(false);
+    if (result.ok) {
+      done();
+    } else if (result.reason !== 'user_cancelled') {
+      setError('Something went wrong — try again.');
+    }
+  };
+
+  const restorePurchases = async () => {
+    setError(null);
+    setRestoring(true);
+    const result = await restore();
+    setRestoring(false);
+    if (!result.ok) {
+      setError('Could not restore — try again.');
+    } else if (isPro(result.data)) {
+      done();
+    }
+    // Restored ok but not Pro: no purchase found on this Apple ID — not an
+    // error, so the screen just stays put.
+  };
 
   return (
     <Screen enter="fade" style={styles.screen}>
@@ -61,7 +142,7 @@ export default function Paywall() {
         </View>
 
         <View style={styles.plans}>
-          {PLANS.map((option) => {
+          {plans.map((option) => {
             const selected = plan === option.id;
             const t = selected ? optionState.on : optionState.off;
             return (
@@ -88,13 +169,34 @@ export default function Paywall() {
         </View>
 
         <View style={styles.actions}>
-          <Button label="Start 7 days free" variant="accent" onPress={done} />
+          <Button
+            label={purchasing ? 'Purchasing…' : 'Start 7 days free'}
+            variant="accent"
+            ready={!purchasing}
+            onPress={start}
+          />
           <Text style={styles.fine}>
             {plan === 'annual'
-              ? 'Then $29.99 a year. Cancel anytime — one tap in Settings.'
-              : 'Then $3.99 a month. Cancel anytime — one tap in Settings.'}
+              ? `Then ${selectedPlan.price} a year. Cancel anytime — one tap in Settings.`
+              : `Then ${selectedPlan.price} a month. Cancel anytime — one tap in Settings.`}
           </Text>
+          {error ? <Text style={styles.error}>{error}</Text> : null}
           <Button label="Stay on free — one app, ten seconds" variant="text" onPress={done} />
+          <View style={styles.legalRow}>
+            <Pressable accessibilityRole="button" onPress={restorePurchases} hitSlop={8}>
+              <Text style={styles.legalLink}>
+                {restoring ? 'Restoring…' : 'Restore purchases'}
+              </Text>
+            </Pressable>
+            <Text style={styles.legalDot}>·</Text>
+            <Pressable accessibilityRole="link" onPress={() => Linking.openURL(TERMS_URL)} hitSlop={8}>
+              <Text style={styles.legalLink}>Terms</Text>
+            </Pressable>
+            <Text style={styles.legalDot}>·</Text>
+            <Pressable accessibilityRole="link" onPress={() => Linking.openURL(PRIVACY_URL)} hitSlop={8}>
+              <Text style={styles.legalLink}>Privacy</Text>
+            </Pressable>
+          </View>
         </View>
       </ScrollView>
     </Screen>
@@ -203,4 +305,20 @@ const styles = StyleSheet.create({
     lineHeight: 12.5 * 1.45,
     color: color.muted60,
   },
+  error: {
+    textAlign: 'center',
+    fontFamily: type.ui.fontFamily,
+    fontSize: 12.5,
+    lineHeight: 12.5 * 1.45,
+    color: color.accentBright,
+  },
+  legalRow: {
+    marginTop: 2,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 8,
+  },
+  legalLink: { fontFamily: type.ui.fontFamily, fontSize: 12.5, color: color.muted62 },
+  legalDot: { fontFamily: type.ui.fontFamily, fontSize: 12.5, color: color.muted60 },
 });
