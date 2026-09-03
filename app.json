@@ -1,0 +1,94 @@
+{
+  "expo": {
+    "name": "Whimm",
+    "slug": "whimm",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "whimm",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#081e21",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#081e21",
+      "resizeMode": "contain",
+      "image": "./assets/icon.png"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.whimm.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "./plugins/withFamilyControls",
+      [
+        "@bacons/apple-targets",
+        {
+          "appleTeamId": "C8T2SMUUDF"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "build": {
+          "experimental": {
+            "ios": {
+              "appExtensions": [
+                {
+                  "bundleIdentifier": "com.whimm.app.shield-config",
+                  "targetName": "WhimmShieldConfiguration",
+                  "entitlements": {
+                    "com.apple.developer.family-controls": true,
+                    "com.apple.security.application-groups": [
+                      "group.com.whimm.app"
+                    ]
+                  }
+                },
+                {
+                  "bundleIdentifier": "com.whimm.app.shield-action",
+                  "targetName": "WhimmShieldAction",
+                  "entitlements": {
+                    "com.apple.developer.family-controls": true,
+                    "com.apple.security.application-groups": [
+                      "group.com.whimm.app"
+                    ]
+                  }
+                },
+                {
+                  "bundleIdentifier": "com.whimm.app.device-activity-monitor",
+                  "targetName": "WhimmDeviceActivityMonitor",
+                  "entitlements": {
+                    "com.apple.developer.family-controls": true,
+                    "com.apple.security.application-groups": [
+                      "group.com.whimm.app"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "projectId": "78762f6f-5057-4764-8929-9b467f583964"
+      }
+    },
+    "owner": "tyyobs",
+    "updates": {
+      "url": "https://u.expo.dev/78762f6f-5057-4764-8929-9b467f583964"
+    }
+  }
+}
